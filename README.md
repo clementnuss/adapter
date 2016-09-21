@@ -36,8 +36,10 @@ $ cp ./fanuc/adapter.ini ~/adapter-machine2
 
 ```
 $ cd ~/adapter-machine1
+$ nano adapter.ini (change the machine tool IP address and localhost listening port number so they are unique for each adapter instance)
 $ adapter_fanuc
 $ cd ~/adapter-machine2
+$ nano adapter.ini (change the machine tool IP address and localhost listening port number)
 $ adapter_fanuc
 ```
 
