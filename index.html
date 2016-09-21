@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>mtconnect Adapter by mmxe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">mtconnect Adapter</h1>
+      <h2 class="project-tagline">MTConnect adapter framework</h2>
+      <a href="https://github.com/mmxe/adapter" class="btn">View on GitHub</a>
+      <a href="https://github.com/mmxe/adapter/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/mmxe/adapter/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>The MTConnect adapter is a tool that implements specific machine API calls that are specialized by machine tool brand. Fanuc, Haas and other controller manufacturers have individual API interfaces built into their controllers.</p>
+
+<p>These instructions are specific to the Fanuc adapter on the linux compatible branch of my copy of the mtconnect/adapter repository</p>
+
+<h1>
+<a id="os-compatibility" class="anchor" href="#os-compatibility" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>OS compatibility</h1>
+
+<p>The adapter was originally written for Windows systems</p>
+
+<p>The adapter can be compiled on Ubuntu and other GNU/Linux and probably other *nix systems as well. The linux-compat branch of the project contains the linux compatible changes.</p>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h1>
+
+<h2>
+<a id="preparing-the-system" class="anchor" href="#preparing-the-system" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Preparing the system</h2>
+
+<p>to install on a x64 system, add the libc6-dev-i386 library and multilib for g++.</p>
+
+<p>``sudo apt-get install libc6-dev-i386 g++-multilib</p>
+
+<h2>
+<a id="get-the-source" class="anchor" href="#get-the-source" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get the source</h2>
+
+<p>``git clone <a href="https://github.com/mmxe/adapter.git">https://github.com/mmxe/adapter.git</a>
+git checkout linux-compat
+cd adapter
+cmake .
+sudo make install</p>
+
+<p>Install process doesn't copy config file. Copy it from adapter/fanuc/adapter.ini into /etc/mtconnect/adapter/ and edit to your liking.</p>
+
+<p>Run adapter_fanuc /etc/mtconnect/adapter/adapter.ini</p>
+
+<p>My install responds like this:
+2016-09-15T17:11:13.347944Z - Info: Arguments: 1
+2016-09-15T17:11:13.348857Z - Info: Ini File: adapter/fanuc/adapter.ini
+2016-09-15T17:11:13.351756Z - Info: Showing hidden axis.
+2016-09-15T17:11:13.352613Z - Info: Adding sample macro 'gauge1' at location 500
+2016-09-15T17:11:13.354319Z - Info: Adding pmc 'Fovr' at location -12
+2016-09-15T17:11:13.355044Z - Info: Adding pmc 'r100' at location 50500
+2016-09-15T17:11:13.355729Z - Info: Adding parameter 'iochannel' at location 20
+2016-09-15T17:11:13.355994Z - Info: Adding parameter 'cuttime' at location 6754
+2016-09-15T17:11:13.356081Z - Info: Adding parameter 'powerontime' at location 6750
+2016-09-15T17:11:13.356496Z - Info: Adding diagnostic 'XposError' at location 15202
+2016-09-15T17:11:13.356558Z - Info: Adding diagnostic 'DCLink' at location 10752
+2016-09-15T17:11:13.356643Z - Info: Adding alarm 'alarm1' at location 1
+2016-09-15T17:11:13.356721Z - Info: Adding alarm 'alarm2' at location 2
+2016-09-15T17:11:13.356923Z - Info: Adding alarm 'alarm3' at location 3
+2016-09-15T17:11:13.356969Z - Info: Adding alarm 'alarm4' at location 4
+2016-09-15T17:11:13.357281Z - Info: Adding critical 'critical1' at location 0
+2016-09-15T17:11:13.357366Z - Info: Adding critical 'critical2' at location 0
+2016-09-15T17:11:13.357670Z - Info: Adding critical 'critical3' at location 0
+2016-09-15T17:11:13.357741Z - Info: Adding critical 'critical4' at location 0
+2016-09-15T17:11:13.357820Z - Info: Server started, waiting on port 7878</p>
+
+<p>Notice it's listening on Port 7878 for an agent to make a request. It doesn't contact an actual Fanuc controller until an agent makes a request.</p>
+
+<p>Next steps:
+Get it do daemonize properly, and to be able to run either multiple instances of the program on different ports (without colliding log files as will happen now) OR to fork multiple processes based on how many hosts and ports are defined in the config file.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/mmxe/adapter">mtconnect Adapter</a> is maintained by <a href="https://github.com/mmxe">mmxe</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
