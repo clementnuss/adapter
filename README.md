@@ -37,16 +37,16 @@ If you have a multi controller environment, each controller needs its own .ini f
 ```
 $ mkdir ~/adapter-machine1
 $ mkdir ~/adapter-machine2
-$ cp ./fanuc/adapter.ini ~/adapter-machine1
-$ cp ./fanuc/adapter.ini ~/adapter-machine2
+$ cp ./fanuc/adapter.ini ~/adapter-machine1/adapter1.ini
+$ cp ./fanuc/adapter.ini ~/adapter-machine2/adapter2.ini
 ```
 
 ```
 $ cd ~/adapter-machine1
-$ nano adapter.ini (change the machine tool IP address and localhost listening port number so they are unique for each adapter instance)
+$ nano adapter1.ini (change the machine tool IP address and localhost listening port number so they are unique for each adapter instance)
 $ adapter_fanuc -c adapter1.ini &
 $ cd ~/adapter-machine2
-$ nano adapter.ini (change the machine tool IP address and localhost listening port number)
+$ nano adapter2.ini (change the machine tool IP address and localhost listening port number)
 $ adapter_fanuc -c adapter2.ini &
 ```
 Log files are named based on the config file name. You should make unique config file names if you run more than once adapter instance. Otherwise log file names will collide and cause problems and confusion.
@@ -118,9 +118,10 @@ Options:
 ```
 
 Note that the adapter is listening on Port 7878 for an agent to make a request. 
+
 It doesn't contact the Fanuc controller until an agent makes a request.
 
 # Next steps
 * Make the linux compatible adapter daemonize (background) properly. 
-Now run with $adapter_fanuc -c adapter.ini &
+
 
