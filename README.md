@@ -20,7 +20,14 @@ cd adapter
 cmake .
 sudo make install
 ```
+At the moment you must manually create a folder for log files: /var/log/adapter/ and give permissions to the user that will run the adapter.
 
+```
+sudo mkdir /var/log/adapter
+sudo chown your_username:your_username /var/log/adapter
+OR
+sudo chmod o+w /var/log/adapter
+```
 
 # Configure and Run
 Install process doesn't copy config file.
@@ -37,11 +44,26 @@ $ cp ./fanuc/adapter.ini ~/adapter-machine2
 ```
 $ cd ~/adapter-machine1
 $ nano adapter.ini (change the machine tool IP address and localhost listening port number so they are unique for each adapter instance)
-$ adapter_fanuc
+$ adapter_fanuc -c adapter1.ini
 $ cd ~/adapter-machine2
 $ nano adapter.ini (change the machine tool IP address and localhost listening port number)
-$ adapter_fanuc
+$ adapter_fanuc -c adapter2.ini
 ```
+Log files are named based on the config file name. You should make unique config file names if you run more than once adapter instance. Otherwise log file names will collide and cause problems and confusion.
+
+# Usage
+```
+$ adapter_fanuc -h
+Starting MTConnect Adapter
+
+Options: 
+	-c,--conf	specify config file location
+	-v,--verbose	messages will be directed to stderr instead of "adapter.log"
+			in the directory where you start the adapter
+	-db,--debug	get debug messages in the log file (or stderr with "-v")
+ 	-h,--help	this help message
+```
+
 
 ### Successful Launch
 ```
@@ -91,11 +113,9 @@ $ adapter_fanuc
 2016-09-21T13:46:13.409342Z - Warning: Trying modal tool number
 ```
 
-Notice the adapter is listening on Port 7878 for an agent to make a request. It doesn't contact the Fanuc controller until an agent makes a request.
+Note that the adapter is listening on Port 7878 for an agent to make a request. 
+It doesn't contact the Fanuc controller until an agent makes a request.
 
 # Next steps
-* Make the linux compatible adapter daemonize (background) properly. Now it's a mess and it's easiest to run each one in it's own screen session
-* run multiple instances of the program with a single config file (without colliding log files as will happen now) 
-* run a single instance of the program with a single config and log file and make it fork multiple processes based on how many hosts and ports are defined in the config file.
-* replace the windows specific config file reader with a more generic linux standard version
-* add a help message that lets the user know what command line options are available
+* Make the linux compatible adapter daemonize (background) properly. Now run with $adapter_fanuc -c adapter.ini &
+
