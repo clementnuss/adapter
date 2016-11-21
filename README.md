@@ -44,17 +44,17 @@ $ cp ./fanuc/adapter.ini ~/adapter-machine2
 ```
 $ cd ~/adapter-machine1
 $ nano adapter.ini (change the machine tool IP address and localhost listening port number so they are unique for each adapter instance)
-$ adapter_fanuc -c adapter1.ini
+$ adapter_fanuc -c adapter1.ini &
 $ cd ~/adapter-machine2
 $ nano adapter.ini (change the machine tool IP address and localhost listening port number)
-$ adapter_fanuc -c adapter2.ini
+$ adapter_fanuc -c adapter2.ini &
 ```
 Log files are named based on the config file name. You should make unique config file names if you run more than once adapter instance. Otherwise log file names will collide and cause problems and confusion.
 
 # Usage
 ```
 $ adapter_fanuc -h
-Starting MTConnect Adapter
+MTConnect Adapter - *nix edition - version 0.9.0
 
 Options: 
 	-c,--conf	specify config file location
@@ -62,6 +62,10 @@ Options:
 			in the directory where you start the adapter
 	-db,--debug	get debug messages in the log file (or stderr with "-v")
  	-h,--help	this help message
+
+	The log files are written to /var/log/adapter/. Create an "adapter" folder in /var/log and give permission for the adapter to write to it.
+	The log file name is copied from the .ini config file name.
+	Use unique config file names if you run more than one adapter instance.
 ```
 
 
@@ -117,5 +121,6 @@ Note that the adapter is listening on Port 7878 for an agent to make a request.
 It doesn't contact the Fanuc controller until an agent makes a request.
 
 # Next steps
-* Make the linux compatible adapter daemonize (background) properly. Now run with $adapter_fanuc -c adapter.ini &
+* Make the linux compatible adapter daemonize (background) properly. 
+Now run with $adapter_fanuc -c adapter.ini &
 
