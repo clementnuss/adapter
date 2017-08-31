@@ -1,5 +1,5 @@
 #include "service.hpp"
-#include "string.h" 
+#include "string.h"
 #ifndef WIN32
 #include <iostream>
 #include <sys/types.h>
@@ -25,33 +25,40 @@ void MTConnectService::initialize(int aArgc, const char *aArgv[])
     } else {
 	FILE * pFile;
 	char log_file[100];
-	char me[100];
+	char me[100] = "adapter";
 	int start=0; int end=0;
 
 	for (int i = 1; i < aArgc; i++) {
-		if ( strcmp( aArgv[i], "-c") == 0 || strcmp( aArgv[i], "—conf") == 0 && (i+1<aArgc) ) {
+		if ( strcmp( aArgv[i], "-c") == 0 || strcmp( aArgv[i], "--conf") == 0 && (i+1<aArgc) ) {
 			for (int j=0; j < strlen(aArgv[i+1]); j++) {
 				if ( (strncmp(&aArgv[i+1][j], "/",1) == 0) ) {  //strip the path (if any) from the config file,
 					start = j+1;
 				} else if  (strncmp(&aArgv[i+1][j],".",1) == 0 ) {  // strip the file extension (typically ".ini" but just strip the last "." and everything after it)
 					end = j-1;
-				}	
+				}
 			}
 			strncpy(me, &aArgv[i+1][start], end-start+1);
 			me[end-start+1]= '\0' ; // store the result in "me" variable.
-			break;   // assumes you only get a single -c or -conf input 
+			break;   // assumes you only get a single -c or -conf input
 
 		}
 	}
 
 
    	snprintf( log_file, 100, "/var/log/adapter/%s.log", me );
-	
-	pFile = fopen ( log_file, "w");
-	gLogger = new Logger(pFile);
-    	gLogger->setLogLevel(Logger::eINFO);
+
+	if (gLogger == NULL) {
+    if (access("/var/log/adapter", W_OK) == 0){
+        pFile = fopen ( log_file, "w");
+        gLogger = new Logger(pFile);
+        gLogger->setLogLevel(Logger::eINFO);
+    } else {
+        gLogger = new Logger();
+        gLogger->error("Unable to write log file in the /var/log/adapter/ folder, please check permissions");
     }
-    
+    }
+    }
+
   }
   if (mDebug)
     gLogger->setLogLevel(Logger::eDEBUG);
@@ -69,14 +76,14 @@ void MTConnectService::initialize(int aArgc, const char *aArgv[])
 #define SVC_WARNING                        ((DWORD)0x90000001L)
 #define SVC_INFO                        ((DWORD)0x50000001L)
 
-SERVICE_STATUS          gSvcStatus; 
-SERVICE_STATUS_HANDLE   gSvcStatusHandle; 
+SERVICE_STATUS          gSvcStatus;
+SERVICE_STATUS_HANDLE   gSvcStatusHandle;
 
-VOID WINAPI SvcCtrlHandler( DWORD ); 
-VOID WINAPI SvcMain( DWORD, LPTSTR * ); 
+VOID WINAPI SvcCtrlHandler( DWORD );
+VOID WINAPI SvcMain( DWORD, LPTSTR * );
 
 VOID ReportSvcStatus( DWORD, DWORD, DWORD );
-VOID SvcInit( DWORD, LPTSTR * ); 
+VOID SvcInit( DWORD, LPTSTR * );
 VOID SvcReportEvent( LPTSTR );
 
 MTConnectService *gService = NULL;
@@ -93,9 +100,9 @@ MTConnectService *gService = NULL;
 // Return value:
 //   None
 //
-int MTConnectService::main(int argc, const char *argv[]) 
-{ 
-  // If command-line parameter is "install", install the service. 
+int MTConnectService::main(int argc, const char *argv[])
+{
+  // If command-line parameter is "install", install the service.
   // Otherwise, the service is probably being started by the SCM.
 
   if(argc > 1) {
@@ -121,21 +128,21 @@ int MTConnectService::main(int argc, const char *argv[])
   }
 
   mIsService = true;
-  SERVICE_TABLE_ENTRY DispatchTable[] = 
-    { 
-      {  mName, (LPSERVICE_MAIN_FUNCTION) SvcMain }, 
-      { NULL, NULL } 
-    }; 
+  SERVICE_TABLE_ENTRY DispatchTable[] =
+    {
+      {  mName, (LPSERVICE_MAIN_FUNCTION) SvcMain },
+      { NULL, NULL }
+    };
 
   gService = this;
 
-  if (!StartServiceCtrlDispatcher( DispatchTable )) 
-  { 
-    SvcReportEvent("StartServiceCtrlDispatcher"); 
-  } 
+  if (!StartServiceCtrlDispatcher( DispatchTable ))
+  {
+    SvcReportEvent("StartServiceCtrlDispatcher");
+  }
 
   return 0;
-} 
+}
 
 //
 // Purpose: 
@@ -159,14 +166,14 @@ void MTConnectService::install(int argc, const char *argv[])
     return;
   }
 
-  // Get a handle to the SCM database. 
+  // Get a handle to the SCM database.
 
-  schSCManager = OpenSCManager( 
+  schSCManager = OpenSCManager(
     NULL,                    // local computer
-    NULL,                    // ServicesActive database 
-    SC_MANAGER_ALL_ACCESS);  // full access rights 
+    NULL,                    // ServicesActive database
+    SC_MANAGER_ALL_ACCESS);  // full access rights
 
-  if (NULL == schSCManager) 
+  if (NULL == schSCManager)
   {
     printf("OpenSCManager failed (%d)\n", GetLastError());
     return;
@@ -174,53 +181,53 @@ void MTConnectService::install(int argc, const char *argv[])
 
   schService = OpenService(schSCManager, mName, SC_MANAGER_ALL_ACCESS);
   if (schService != NULL) {
-    if (! ChangeServiceConfig( 
-	  schService,            // handle of service 
+    if (! ChangeServiceConfig(
+	  schService,            // handle of service
 	  SERVICE_WIN32_OWN_PROCESS |
-	    SERVICE_INTERACTIVE_PROCESS,     // service type: no change 
-	  SERVICE_AUTO_START,  // service start type 
-	  SERVICE_NO_CHANGE,     // error control: no change 
-	  szPath,                  // binary path: no change 
-	  NULL,                  // load order group: no change 
-	  NULL,                  // tag ID: no change 
-	  NULL,                  // dependencies: no change 
-	  NULL,                  // account name: no change 
-	  NULL,                  // password: no change 
+	    SERVICE_INTERACTIVE_PROCESS,     // service type: no change
+	  SERVICE_AUTO_START,  // service start type
+	  SERVICE_NO_CHANGE,     // error control: no change
+	  szPath,                  // binary path: no change
+	  NULL,                  // load order group: no change
+	  NULL,                  // tag ID: no change
+	  NULL,                  // dependencies: no change
+	  NULL,                  // account name: no change
+	  NULL,                  // password: no change
 	  NULL) )                // display name: no change
     {
       printf("ChangeServiceConfig failed (%d)\n", GetLastError());
     }
-    else printf("Service updated successfully.\n"); 
+    else printf("Service updated successfully.\n");
   } else {
 
     // Create the service
 
-    schService = CreateService( 
-      schSCManager,              // SCM database 
-      mName,                   // name of service 
-      mName,                   // service name to display 
-      SERVICE_ALL_ACCESS,        // desired access 
+    schService = CreateService(
+      schSCManager,              // SCM database
+      mName,                   // name of service
+      mName,                   // service name to display
+      SERVICE_ALL_ACCESS,        // desired access
       SERVICE_WIN32_OWN_PROCESS |
-        SERVICE_INTERACTIVE_PROCESS, // service type 
-      SERVICE_AUTO_START,      // start type 
-      SERVICE_ERROR_NORMAL,      // error control type 
-      szPath,                    // path to service's binary 
-      NULL,                      // no load ordering group 
-      NULL,                      // no tag identifier 
-      NULL,                      // no dependencies 
-      NULL,                      // LocalSystem account 
-      NULL);                     // no password 
+        SERVICE_INTERACTIVE_PROCESS, // service type
+      SERVICE_AUTO_START,      // start type
+      SERVICE_ERROR_NORMAL,      // error control type
+      szPath,                    // path to service's binary
+      NULL,                      // no load ordering group
+      NULL,                      // no tag identifier
+      NULL,                      // no dependencies
+      NULL,                      // LocalSystem account
+      NULL);                     // no password
 
-    if (schService == NULL) 
+    if (schService == NULL)
     {
-      printf("CreateService failed (%d)\n", GetLastError()); 
+      printf("CreateService failed (%d)\n", GetLastError());
       CloseServiceHandle(schSCManager);
       return;
     }
-    else printf("Service installed successfully\n"); 
+    else printf("Service installed successfully\n");
   }
 
-  CloseServiceHandle(schService); 
+  CloseServiceHandle(schService);
   CloseServiceHandle(schSCManager);
 
   HKEY software;
@@ -265,7 +272,7 @@ void MTConnectService::install(int argc, const char *argv[])
   char arguments[2048];
   // TODO: create registry entries for arguments to be passed in later to create the adapter multi_sz
   int d = 0;
-  for (int i = 0; i < argc; i++) { 
+  for (int i = 0; i < argc; i++) {
     strcpy(arguments + d, argv[i]);
     d += strlen(arguments + d) + 1;
   }
@@ -280,7 +287,7 @@ void MTConnectService::remove()
   SC_HANDLE manager;
   SC_HANDLE service;
   manager = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
-  
+
   if (manager == NULL) {
     printf("Could not open Service Control Manager");
     return;
@@ -291,13 +298,13 @@ void MTConnectService::remove()
     printf("Could not open Service ");
     return;
   }
-  
+
   if(::DeleteService(service) == 0) {
     printf("Could delete service %s\n", mName);
   } else {
     printf("Successfully removed service %s\n", mName);
   }
-  
+
   ::CloseServiceHandle(service);
 }
 
@@ -333,20 +340,20 @@ VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR *lpszArgv )
   }
 
   gService->setName(lpszArgv[0]);
-  gSvcStatusHandle = RegisterServiceCtrlHandler( 
-    gService->name(), 
+  gSvcStatusHandle = RegisterServiceCtrlHandler(
+    gService->name(),
     SvcCtrlHandler);
 
   if( !gSvcStatusHandle )
-  { 
-    SvcReportEvent("RegisterServiceCtrlHandler"); 
-    return; 
-  } 
+  {
+    SvcReportEvent("RegisterServiceCtrlHandler");
+    return;
+  }
 
   // These SERVICE_STATUS members remain as set here
 
-  gSvcStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS; 
-  gSvcStatus.dwServiceSpecificExitCode = 0;    
+  gSvcStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS;
+  gSvcStatus.dwServiceSpecificExitCode = 0;
 
   // Report initial status to the SCM
 
@@ -410,7 +417,7 @@ VOID SvcInit( DWORD dwArgc, LPTSTR *lpszArgv)
   gService->initialize(argc, (const char**) argp);
 
   // TO_DO: Declare and set any required variables.
-  //   Be sure to periodically call ReportSvcStatus() with 
+  //   Be sure to periodically call ReportSvcStatus() with
   //   SERVICE_START_PENDING. If initialization fails, call
   //   ReportSvcStatus with SERVICE_STOPPED.
 
@@ -454,13 +461,13 @@ VOID ReportSvcStatus( DWORD dwCurrentState,
 
   if (dwCurrentState == SERVICE_START_PENDING)
     gSvcStatus.dwControlsAccepted = 0;
-  else 
+  else
     gSvcStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;
 
   if ( (dwCurrentState == SERVICE_RUNNING) ||
        (dwCurrentState == SERVICE_STOPPED) )
     gSvcStatus.dwCheckPoint = 0;
-  else 
+  else
     gSvcStatus.dwCheckPoint = dwCheckPoint++;
 
   // Report the status of the service to the SCM.
@@ -480,11 +487,11 @@ VOID ReportSvcStatus( DWORD dwCurrentState,
 //
 VOID WINAPI SvcCtrlHandler( DWORD dwCtrl )
 {
-  // Handle the requested control code. 
+  // Handle the requested control code.
 
-  switch(dwCtrl) 
-  {  
-  case SERVICE_CONTROL_STOP: 
+  switch(dwCtrl)
+  {
+  case SERVICE_CONTROL_STOP:
     ReportSvcStatus(SERVICE_STOP_PENDING, NO_ERROR, 0);
     if (gService != NULL)
       gService->stop();
@@ -492,12 +499,12 @@ VOID WINAPI SvcCtrlHandler( DWORD dwCtrl )
 
     return;
 
-  case SERVICE_CONTROL_INTERROGATE: 
-    break; 
-
-  default: 
+  case SERVICE_CONTROL_INTERROGATE:
     break;
-  } 
+
+  default:
+    break;
+  }
 
 }
 
@@ -514,8 +521,8 @@ VOID WINAPI SvcCtrlHandler( DWORD dwCtrl )
 // Remarks:
 //   The service must have an entry in the Application event log.
 //
-VOID SvcReportEvent(LPTSTR szFunction) 
-{ 
+VOID SvcReportEvent(LPTSTR szFunction)
+{
   HANDLE hEventSource;
   LPCTSTR lpszStrings[2];
   char Buffer[80];
@@ -543,8 +550,8 @@ VOID SvcReportEvent(LPTSTR szFunction)
   }
 }
 
-VOID SvcLogEvent(WORD aType, DWORD aId, LPSTR aText) 
-{ 
+VOID SvcLogEvent(WORD aType, DWORD aId, LPSTR aText)
+{
   HANDLE hEventSource;
   LPCTSTR lpszStrings[3];
 
@@ -605,10 +612,10 @@ void ServiceLogger::debug(const char *aFormat, ...)
 
 #else
 
-int MTConnectService::main(int argc, const char *argv[]) 
+int MTConnectService::main(int argc, const char *argv[])
 { 
  
-  std::cout << "MTConnect Adapter - *nix edition - version 0.9.0\n";
+  std::cout << "MTConnect Adapter - *nix edition - version 0.9.1\n";
 
   for (int i = 1; i < argc; i++) {
 
@@ -617,18 +624,19 @@ int MTConnectService::main(int argc, const char *argv[])
 	}
 	if ( strcmp( argv[i], "-v") == 0 || strcmp( argv[i], "--verbose") == 0 ) {
 		// don't log to a file, log to stderr
+		gLogger = new Logger();
 	}
 	if ( strcmp( argv[i], "-h") == 0 ||  strcmp( argv[i], "--help") == 0 ) {
 		printf("\nOptions: \n	-c,--conf	specify config file location\n	-v,--verbose	messages will be directed to stderr instead of \"adapter.log\"\n			in the directory where you start the adapter\n	-db,--debug	get debug messages in the log file (or stderr with \"-v\")\n 	-h,--help	this help message\n\n	The log files are written to /var/log/adapter/. Create an \"adapter\" folder in /var/log and give permission for the adapter to write to it.\n	The log file name is copied from the .ini config file name.\n	Use unique config file names if you run more than one adapter instance.\n\n");
 		return 0;
 	}
- 
+
 
 	if( mDebug )
 		printf("argc= %d; argv[%d]= \"%s\"\n", argc,i, argv[i]);
-	
+
    }  // end for loop
-	
+
    initialize(argc, argv);
 
    start();
