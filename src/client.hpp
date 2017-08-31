@@ -35,29 +35,33 @@
 #define CLIENT_HPP
 
 #include "threading.hpp"
+
 /*
  * A wrapper around a client socket. An adapter is capable of managing
  * multiple sockets. 
  */
-class Client
-{
-  /* Instance Variables */
+class Client {
+    /* Instance Variables */
 protected:
-  SOCKET mSocket;
-  MTCMutex mWriteLock;
+    SOCKET mSocket;
+    MTCMutex mWriteLock;
 
-  /* class methods */
+    /* class methods */
 public:
-  bool mHeartbeats;
-  unsigned int mLastHeartbeat;
+    bool mHeartbeats;
+    unsigned int mLastHeartbeat;
 
-  /* Instance methods */
+    /* Instance methods */
 public:
-  Client(SOCKET aSocket);
-  ~Client();
-  int write(const char *aString);
-  int read(char *aBuffer, int aLen);
-  SOCKET socket() { return mSocket; }
+    Client(SOCKET aSocket);
+
+    ~Client();
+
+    int write(const char *aString);
+
+    int read(char *aBuffer, int aLen);
+
+    SOCKET socket() { return mSocket; }
 };
 
 #endif

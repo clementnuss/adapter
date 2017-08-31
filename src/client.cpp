@@ -36,43 +36,39 @@
 #include "server.hpp"
 
 /* Instance methods */
-Client::Client(SOCKET aSocket)
-{
-  mSocket = aSocket;
-  mHeartbeats = false;
+Client::Client(SOCKET aSocket) {
+    mSocket = aSocket;
+    mHeartbeats = false;
 }
 
-Client::~Client()
-{
-  ::shutdown(mSocket, SHUT_RDWR);
-  ::closesocket(mSocket);
+Client::~Client() {
+    ::shutdown(mSocket, SHUT_RDWR);
+    ::closesocket(mSocket);
 }
 
-int Client::write(const char *aString)
-{
-  int res;
-  MTCAutoLock lock(mWriteLock);
+int Client::write(const char *aString) {
+    int res;
+    MTCAutoLock lock(mWriteLock);
 
-  try {
+    try {
 #ifdef WIN32
-    res = ::send(mSocket, aString, (int) strlen(aString), 0);
+        res = ::send(mSocket, aString, (int) strlen(aString), 0);
 #else
-    res = ::send(mSocket, aString, (int) strlen(aString), MSG_NOSIGNAL);
+        res = ::send(mSocket, aString, (int) strlen(aString), MSG_NOSIGNAL);
 #endif
-  }
+    }
 
-  catch(...) {
-    res = -1;
-  }
+    catch (...) {
+        res = -1;
+    }
 
-  return res;
+    return res;
 }
 
-int Client::read(char *aBuffer, int aMaxLen)
-{
-  int len = recv(mSocket, aBuffer, aMaxLen, 0);
-  if (len >= 0)
-  	aBuffer[len] = 0;
-	
-  return len;
+int Client::read(char *aBuffer, int aMaxLen) {
+    int len = recv(mSocket, aBuffer, aMaxLen, 0);
+    if (len >= 0)
+        aBuffer[len] = 0;
+
+    return len;
 }

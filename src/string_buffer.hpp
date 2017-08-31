@@ -41,26 +41,33 @@
  *
  * Currently allocating in 1k increments.
  */
-class StringBuffer 
-{
+class StringBuffer {
 protected:
-  char *mBuffer; /* A resizable character buffer */
-  size_t mSize;     /* The allocated size of the string */
-  size_t mLength;   /* The length of the string */
-  char mTimestamp[64];
-  
-public:
-  StringBuffer(const char *aString = 0);
-  ~StringBuffer();
+    char *mBuffer; /* A resizable character buffer */
+    size_t mSize;     /* The allocated size of the string */
+    size_t mLength;   /* The length of the string */
+    char mTimestamp[64];
 
-  operator const char *() { return mBuffer; }
-  const char *append(const char *aString);
-  const char* operator<<(const char *aString) { return append(aString); }
-  void reset();
-  void timestamp();
-  void setTimestamp(const char *aTs) { strcpy(mTimestamp, aTs); }
-  size_t  length() { return mLength; }
-  void newline();
+public:
+    StringBuffer(const char *aString = 0);
+
+    ~StringBuffer();
+
+    operator const char *() { return mBuffer; }
+
+    const char *append(const char *aString);
+
+    const char *operator<<(const char *aString) { return append(aString); }
+
+    void reset();
+
+    void timestamp();
+
+    void setTimestamp(const char *aTs) { strcpy(mTimestamp, aTs); }
+
+    size_t length() { return mLength; }
+
+    void newline();
 };
 
 #endif

@@ -90,30 +90,30 @@ private:
 
 #else // Not threaded
 
-class MTCMutex
-{
+class MTCMutex {
 public:
-  void lock() {}
-  void unlock() {}  
+    void lock() {}
+
+    void unlock() {}
 };
 
 #endif
 
 class MTCAutoLock {
 public:
-  MTCAutoLock(MTCMutex &aMutex) : mMutex(&aMutex) {
-    mMutex->lock();
-  }
-  
-  ~MTCAutoLock() {
-    mMutex->unlock();
-  }
-  
+    MTCAutoLock(MTCMutex &aMutex) : mMutex(&aMutex) {
+        mMutex->lock();
+    }
+
+    ~MTCAutoLock() {
+        mMutex->unlock();
+    }
+
 protected:
-  MTCMutex *mMutex;
+    MTCMutex *mMutex;
 
 private:
-  MTCAutoLock() : mMutex(NULL) {}
+    MTCAutoLock() : mMutex(NULL) {}
 };
 
 #endif

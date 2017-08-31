@@ -41,75 +41,63 @@ using namespace std;
  * TimeSeries methods
  */
 TimeSeries::TimeSeries(const char *aName, float aEpsilon, float aRate)
-  : DeviceDatum(aName), mEpsilon(aEpsilon), mRate(aRate)
-{
-  mUnavailable = false;
-}
- 
-void TimeSeries::addValue(float aValue)
-{
-  mValues.push_back(aValue);
-  
-  mChanged = true;
-  mHasValue = true;
-  mUnavailable = false;
+        : DeviceDatum(aName), mEpsilon(aEpsilon), mRate(aRate) {
+    mUnavailable = false;
 }
 
-bool TimeSeries::setValue(std::vector<float> aValues)
-{
-  mValues = aValues;
+void TimeSeries::addValue(float aValue) {
+    mValues.push_back(aValue);
 
-  mChanged = true;
-  mHasValue = true;
-  mUnavailable = false;
-
-  return true;
-}
-
-bool TimeSeries::append(StringBuffer &aStringBuffer)
-{
-  char buffer[1024];
-  if (mUnavailable)
-  {
-    snprintf(buffer, 1023, "|%s|0||UNAVAILABLE", mName);
-    aStringBuffer.append(buffer);
-  }
-  else
-  {
-    if (mRate > 0)
-      snprintf(buffer, 1023, "|%s|%d|%g|", mName, (int) mValues.size(), mRate);
-    else
-      snprintf(buffer, 1023, "|%s|%d||", mName, (int) mValues.size());
-    aStringBuffer.append(buffer);
-    for (size_t i = 0; i < mValues.size(); i++)
-    {
-      snprintf(buffer, 1023, "%.10g ", mValues[i]);
-      aStringBuffer.append(buffer);
-    }
-  }
-
-  mChanged = false;
-  return true;
-}
-
-char *TimeSeries::toString(char *aBuffer, int aMaxLen)
-{
-  return aBuffer;
-}
-
-bool TimeSeries::unavailable()
-{
-  if (!mUnavailable)
-  {
     mChanged = true;
-    mUnavailable = true;
     mHasValue = true;
-  }
-  
-  return mChanged;
+    mUnavailable = false;
 }
 
-bool TimeSeries::requiresFlush()
-{
-  return true;
+bool TimeSeries::setValue(std::vector<float> aValues) {
+    mValues = aValues;
+
+    mChanged = true;
+    mHasValue = true;
+    mUnavailable = false;
+
+    return true;
+}
+
+bool TimeSeries::append(StringBuffer &aStringBuffer) {
+    char buffer[1024];
+    if (mUnavailable) {
+        snprintf(buffer, 1023, "|%s|0||UNAVAILABLE", mName);
+        aStringBuffer.append(buffer);
+    } else {
+        if (mRate > 0)
+            snprintf(buffer, 1023, "|%s|%d|%g|", mName, (int) mValues.size(), mRate);
+        else
+            snprintf(buffer, 1023, "|%s|%d||", mName, (int) mValues.size());
+        aStringBuffer.append(buffer);
+        for (size_t i = 0; i < mValues.size(); i++) {
+            snprintf(buffer, 1023, "%.10g ", mValues[i]);
+            aStringBuffer.append(buffer);
+        }
+    }
+
+    mChanged = false;
+    return true;
+}
+
+char *TimeSeries::toString(char *aBuffer, int aMaxLen) {
+    return aBuffer;
+}
+
+bool TimeSeries::unavailable() {
+    if (!mUnavailable) {
+        mChanged = true;
+        mUnavailable = true;
+        mHasValue = true;
+    }
+
+    return mChanged;
+}
+
+bool TimeSeries::requiresFlush() {
+    return true;
 }

@@ -38,9 +38,13 @@
 
 /* Windows specific include files and types */
 #include "winsock2.h"
+
 #ifndef AFX
+
 #include "windows.h"
+
 #endif
+
 #include "errno.h"
 
 #define SHUT_RDWR SD_BOTH

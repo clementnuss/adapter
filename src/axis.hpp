@@ -39,54 +39,55 @@
 #include <string>
 
 // An abstract axis type.
-class Axis : public Component
-{
+class Axis : public Component {
 public:
-  enum Type {
-    LINEAR,
-    ROTARY
-  };
+    enum Type {
+        LINEAR,
+        ROTARY
+    };
 
-  enum Units {
-    INCH,
-    MM
-  };
+    enum Units {
+        INCH,
+        MM
+    };
 
-  enum Mode {
-    INDEX,
-    SPINDLE,
-    CONTOUR
-  };
-  
+    enum Mode {
+        INDEX,
+        SPINDLE,
+        CONTOUR
+    };
+
 protected:
-  Sample mLoad;
-  int mNumber;
-  
-  Mode mMode;
-  Type mType;
-  Units mUnits;
+    Sample mLoad;
+    int mNumber;
 
-  string mName;
-  
+    Mode mMode;
+    Type mType;
+    Units mUnits;
+
+    string mName;
+
 public:
-  Axis(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
+    Axis(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
 
-  Mode getMode() const { return mMode; }
-  Type getType() const { return mType; }
-  Units getUnits() const { return mUnits; }
-  const std::string &getName() { return mName; }
+    Mode getMode() const { return mMode; }
 
-  virtual bool gatherData(void *aArg) = 0;
+    Type getType() const { return mType; }
+
+    Units getUnits() const { return mUnits; }
+
+    const std::string &getName() { return mName; }
+
+    virtual bool gatherData(void *aArg) = 0;
 };
 
-class Linear : public Axis 
-{
+class Linear : public Axis {
 protected:
-  Sample mActualPosition;
-  Sample mCommandedPosition;
+    Sample mActualPosition;
+    Sample mCommandedPosition;
 
 public:
-  Linear(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
+    Linear(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
 };
 
 #endif // AXIS_HPP

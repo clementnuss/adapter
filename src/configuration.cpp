@@ -37,44 +37,36 @@
 using namespace std;
 
 Configuration::Configuration()
-  : mPort(7878), mScanDelay(1000), mTimeout(10000)
-{
+        : mPort(7878), mScanDelay(1000), mTimeout(10000) {
 }
 
-void Configuration::parse(istream &aStream, int aPort, int aDelay, int aTimeout, const char *aService)
-{
-  YAML::Parser parser(aStream);
-  YAML::Node doc;
-  parser.GetNextDocument(doc);
-  parse(doc, aPort, aDelay, aTimeout, aService);
+void Configuration::parse(istream &aStream, int aPort, int aDelay, int aTimeout, const char *aService) {
+    YAML::Parser parser(aStream);
+    YAML::Node doc;
+    parser.GetNextDocument(doc);
+    parse(doc, aPort, aDelay, aTimeout, aService);
 }
 
-void Configuration::parse(YAML::Node &aDoc, int aPort, int aDelay, int aTimeout, const char *aService)
-{
-  if (aDoc.FindValue("adapter") != NULL)
-  {
-    const YAML::Node &adapter = aDoc["adapter"];
-    SET_WITH_DEFAULT(adapter, "port", mPort, aPort);
-    SET_WITH_DEFAULT(adapter, "scanDelay", mScanDelay, aDelay);
-    SET_WITH_DEFAULT(adapter, "timeout", mTimeout, aTimeout);
-    SET_WITH_DEFAULT(adapter, "service", mServiceName, aService);
-  }
-  else
-  {
-  	mPort = aPort;
-  	mScanDelay = aDelay;
-  	mTimeout = aTimeout;
-  	mServiceName = aService;
-  }
+void Configuration::parse(YAML::Node &aDoc, int aPort, int aDelay, int aTimeout, const char *aService) {
+    if (aDoc.FindValue("adapter") != NULL) {
+        const YAML::Node &adapter = aDoc["adapter"];
+        SET_WITH_DEFAULT(adapter, "port", mPort, aPort);
+        SET_WITH_DEFAULT(adapter, "scanDelay", mScanDelay, aDelay);
+        SET_WITH_DEFAULT(adapter, "timeout", mTimeout, aTimeout);
+        SET_WITH_DEFAULT(adapter, "service", mServiceName, aService);
+    } else {
+        mPort = aPort;
+        mScanDelay = aDelay;
+        mTimeout = aTimeout;
+        mServiceName = aService;
+    }
 }
 
-Configuration::~Configuration()
-{
+Configuration::~Configuration() {
 }
 
-RegisterSet *Configuration::getRegisters(string &aName)
-{
-  return mRegisters[aName];
+RegisterSet *Configuration::getRegisters(string &aName) {
+    return mRegisters[aName];
 }
 
 

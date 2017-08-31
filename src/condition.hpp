@@ -38,98 +38,116 @@
 #include "device_datum.hpp"
 
 
-class Condition : public DeviceDatum 
-{
+class Condition : public DeviceDatum {
 public:
-  enum ELevels {
-    eUNAVAILABLE,
-    eNORMAL,
-    eWARNING,
-    eFAULT
-  };
-  
+    enum ELevels {
+        eUNAVAILABLE,
+        eNORMAL,
+        eWARNING,
+        eFAULT
+    };
+
 protected:
-  class ActiveCondition 
-  {
-  protected:
-    ELevels mLevel;
-    char mText[EVENT_VALUE_LEN];
-    char mNativeCode[EVENT_VALUE_LEN];
-    char mNativeSeverity[EVENT_VALUE_LEN];
-    char mQualifier[EVENT_VALUE_LEN];
-    
-    bool mChanged;
-    bool mMarked;
-    bool mPlaceHolder;
-    
-  public:
-    ActiveCondition() : mChanged(true), mMarked(true), mPlaceHolder(false) {
-      mNativeCode[0] = mNativeSeverity[0] = mText[0] =
-       mQualifier[0] = 0;
-    }
-    ActiveCondition(ELevels aLevel, const char *aText = "", const char *aCode = "",
-		    const char *aQualifier = "", const char *aSeverity = "") 
-      : mChanged(true), mMarked(true), mPlaceHolder(false)
-    {
-      setValue(aLevel, aText, aCode, aQualifier, aSeverity);
-    }
-    
-    bool setValue(ELevels aLevel, const char *aText = "", const char *aCode = "",
-		  const char *aQualifier = "", const char *aSeverity = "");
-    
-    char *toString(char *aBuffer, int aMaxLen);
-    bool hasChanged() { return mChanged; }
-    
-    ELevels getLevel() { return mLevel; }
-    const char *getText() { return mText; }
-    const char *getNativeCode() { return mNativeCode; }
-    const char *getNativeSeverity() { return mNativeSeverity; }
-    const char *getQualifier() { return mQualifier; }
+    class ActiveCondition {
+    protected:
+        ELevels mLevel;
+        char mText[EVENT_VALUE_LEN];
+        char mNativeCode[EVENT_VALUE_LEN];
+        char mNativeSeverity[EVENT_VALUE_LEN];
+        char mQualifier[EVENT_VALUE_LEN];
 
-    void clear() { mMarked = false; }
-    void mark() { mMarked = true; }
-    bool isMarked() { return mMarked; }
-    bool isPlaceHolder() { return mPlaceHolder; }
-  };
-  
+        bool mChanged;
+        bool mMarked;
+        bool mPlaceHolder;
+
+    public:
+        ActiveCondition() : mChanged(true), mMarked(true), mPlaceHolder(false) {
+            mNativeCode[0] = mNativeSeverity[0] = mText[0] =
+            mQualifier[0] = 0;
+        }
+
+        ActiveCondition(ELevels aLevel, const char *aText = "", const char *aCode = "",
+                        const char *aQualifier = "", const char *aSeverity = "")
+                : mChanged(true), mMarked(true), mPlaceHolder(false) {
+            setValue(aLevel, aText, aCode, aQualifier, aSeverity);
+        }
+
+        bool setValue(ELevels aLevel, const char *aText = "", const char *aCode = "",
+                      const char *aQualifier = "", const char *aSeverity = "");
+
+        char *toString(char *aBuffer, int aMaxLen);
+
+        bool hasChanged() { return mChanged; }
+
+        ELevels getLevel() { return mLevel; }
+
+        const char *getText() { return mText; }
+
+        const char *getNativeCode() { return mNativeCode; }
+
+        const char *getNativeSeverity() { return mNativeSeverity; }
+
+        const char *getQualifier() { return mQualifier; }
+
+        void clear() { mMarked = false; }
+
+        void mark() { mMarked = true; }
+
+        bool isMarked() { return mMarked; }
+
+        bool isPlaceHolder() { return mPlaceHolder; }
+    };
+
 protected:
-  ActiveCondition **mActiveList;
-  int mActiveSize;
-  int mActiveCount;
-  static const int mInitialActiveListSize = 16;
+    ActiveCondition **mActiveList;
+    int mActiveSize;
+    int mActiveCount;
+    static const int mInitialActiveListSize = 16;
 
-  bool mBegun;
-  bool mPrepared;
-  bool mSimple;
+    bool mBegun;
+    bool mPrepared;
+    bool mSimple;
 
-  void add(ActiveCondition *aCondition);
-  bool removeAt(int i);
+    void add(ActiveCondition *aCondition);
 
-  void append(StringBuffer &aStringBuffer, char *aBuffer, ActiveCondition *aCond,
-	      bool &aFirst, int aMaxLen);
-  
+    bool removeAt(int i);
+
+    void append(StringBuffer &aStringBuffer, char *aBuffer, ActiveCondition *aCond,
+                bool &aFirst, int aMaxLen);
+
 public:
-  Condition(const char *aName = "", bool aSimple = false);
-  virtual ~Condition();
-  virtual char *toString(char *aBuffer, int aMaxLen);
+    Condition(const char *aName = "", bool aSimple = false);
 
-  virtual bool requiresFlush();
-  virtual bool unavailable();
-  virtual bool append(StringBuffer &aBuffer);
+    virtual ~Condition();
 
-  bool add(ELevels aLevel, const char *aText = "", const char *aCode = "",
-	   const char *aQualifier = "", const char *aSeverity = "");
-  void remove(const char *aCode);   
-   
-  void removeAll();
-  bool normal() { return add(eNORMAL); }
-  bool isActive(const char *aNativeCode);
-  void setSimple() { mSimple = true; }
+    virtual char *toString(char *aBuffer, int aMaxLen);
 
-  virtual void begin();
-  virtual void prepare();
-  virtual void cleanup();
-  virtual void initialize();
+    virtual bool requiresFlush();
+
+    virtual bool unavailable();
+
+    virtual bool append(StringBuffer &aBuffer);
+
+    bool add(ELevels aLevel, const char *aText = "", const char *aCode = "",
+             const char *aQualifier = "", const char *aSeverity = "");
+
+    void remove(const char *aCode);
+
+    void removeAll();
+
+    bool normal() { return add(eNORMAL); }
+
+    bool isActive(const char *aNativeCode);
+
+    void setSimple() { mSimple = true; }
+
+    virtual void begin();
+
+    virtual void prepare();
+
+    virtual void cleanup();
+
+    virtual void initialize();
 };
 
 #endif

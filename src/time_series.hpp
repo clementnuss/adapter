@@ -41,30 +41,38 @@
  * A time series of samples
  */
 
-class TimeSeries : public DeviceDatum 
-{
+class TimeSeries : public DeviceDatum {
 protected:
-  std::vector<float> mValues;
-  bool mUnavailable;
-  float mEpsilon;
-  float mRate;
+    std::vector<float> mValues;
+    bool mUnavailable;
+    float mEpsilon;
+    float mRate;
 
 public:
-  TimeSeries(const char *aName, float aEpsilon = 0.000001,
-             float aRate = -1.0);
+    TimeSeries(const char *aName, float aEpsilon = 0.000001,
+               float aRate = -1.0);
 
-  bool setValue(std::vector<float> aValues);
-  void addValue(float aValue);
-  std::vector<float> &getValues() { return mValues; }
-  int getCount() { return mValues.size(); }
-  void clear() { mValues.clear(); }
-  float getRate() { return mRate; }
-  void setRate(float aRate) { mRate = aRate; }
-  
-  virtual char *toString(char *aBuffer, int aMaxLen);
-  virtual bool unavailable();
-  virtual bool requiresFlush();
-  virtual bool append(StringBuffer &aBuffer);
+    bool setValue(std::vector<float> aValues);
+
+    void addValue(float aValue);
+
+    std::vector<float> &getValues() { return mValues; }
+
+    int getCount() { return mValues.size(); }
+
+    void clear() { mValues.clear(); }
+
+    float getRate() { return mRate; }
+
+    void setRate(float aRate) { mRate = aRate; }
+
+    virtual char *toString(char *aBuffer, int aMaxLen);
+
+    virtual bool unavailable();
+
+    virtual bool requiresFlush();
+
+    virtual bool append(StringBuffer &aBuffer);
 };
 
 

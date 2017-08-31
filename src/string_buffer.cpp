@@ -34,86 +34,75 @@
 #include "internal.hpp"
 #include "string_buffer.hpp"
 
-StringBuffer::StringBuffer(const char *aString)
-{
-  mLength = mSize = 0;
-  mTimestamp[0] = 0;
-  if (aString != 0)
-  {
-    append(aString);
-  }
-  else
-  {
-    mBuffer = 0;
-  }
+StringBuffer::StringBuffer(const char *aString) {
+    mLength = mSize = 0;
+    mTimestamp[0] = 0;
+    if (aString != 0) {
+        append(aString);
+    } else {
+        mBuffer = 0;
+    }
 }
 
-StringBuffer::~StringBuffer()
-{
-  if (mBuffer != 0)
-    free(mBuffer);
+StringBuffer::~StringBuffer() {
+    if (mBuffer != 0)
+        free(mBuffer);
 }
 
-const char *StringBuffer::append(const char* aString)
-{
-  /* Include additional length for timestamp */
-  size_t len = strlen(aString);
-  size_t totalLength = mLength + len;
-  size_t tsLen = strlen(mTimestamp);
-  if (mLength == 0)
-    totalLength += tsLen;
-  if (totalLength >= mSize)
-  {
-    size_t newLen = ((totalLength / 1024) + 1) * 1024;
-    char *newBuffer = (char*) malloc(newLen);
-    memcpy(newBuffer, mBuffer, mLength);
-    
-    free(mBuffer);
-    mBuffer = newBuffer;
-    mSize = newLen;
-  }
-  
-  if (mLength == 0 && tsLen > 0)
-  {
-    strcpy(mBuffer, mTimestamp);
-    mLength += tsLen;
-  }
+const char *StringBuffer::append(const char *aString) {
+    /* Include additional length for timestamp */
+    size_t len = strlen(aString);
+    size_t totalLength = mLength + len;
+    size_t tsLen = strlen(mTimestamp);
+    if (mLength == 0)
+        totalLength += tsLen;
+    if (totalLength >= mSize) {
+        size_t newLen = ((totalLength / 1024) + 1) * 1024;
+        char *newBuffer = (char *) malloc(newLen);
+        memcpy(newBuffer, mBuffer, mLength);
 
-  strcpy(mBuffer + mLength, aString);
-  mLength += len;
-  
-  return mBuffer;
+        free(mBuffer);
+        mBuffer = newBuffer;
+        mSize = newLen;
+    }
+
+    if (mLength == 0 && tsLen > 0) {
+        strcpy(mBuffer, mTimestamp);
+        mLength += tsLen;
+    }
+
+    strcpy(mBuffer + mLength, aString);
+    mLength += len;
+
+    return mBuffer;
 }
 
-void StringBuffer::newline()
-{
-  append("\n");
-  append(mTimestamp);
+void StringBuffer::newline() {
+    append("\n");
+    append(mTimestamp);
 }
 
-void StringBuffer::reset()
-{
-  if (mBuffer != 0)
-  {
-    mBuffer[0] = 0;
-    mLength = 0;
-  }
+void StringBuffer::reset() {
+    if (mBuffer != 0) {
+        mBuffer[0] = 0;
+        mLength = 0;
+    }
 }
 
-void StringBuffer::timestamp()
-{
+void StringBuffer::timestamp() {
 #ifdef WIN32
-  SYSTEMTIME st;
-  GetSystemTime(&st);
-  sprintf(mTimestamp, "%4d-%02d-%02dT%02d:%02d:%02d.%03dZ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+    SYSTEMTIME st;
+    GetSystemTime(&st);
+    sprintf(mTimestamp, "%4d-%02d-%02dT%02d:%02d:%02d.%03dZ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute,
+            st.wSecond, st.wMilliseconds);
 #else
-  struct timeval tv;
-  struct timezone tz;
-  
-  gettimeofday(&tv, &tz);
-  
-  strftime(mTimestamp, 64, "%Y-%m-%dT%H:%M:%S", gmtime(&tv.tv_sec));
-  sprintf(mTimestamp + strlen(mTimestamp), ".%06ldZ", tv.tv_usec);
+    struct timeval tv;
+    struct timezone tz;
+
+    gettimeofday(&tv, &tz);
+
+    strftime(mTimestamp, 64, "%Y-%m-%dT%H:%M:%S", gmtime(&tv.tv_sec));
+    sprintf(mTimestamp + strlen(mTimestamp), ".%06ldZ", tv.tv_usec);
 #endif
 }
 

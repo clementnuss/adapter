@@ -13,7 +13,7 @@
 
   This library is proprietary software complied by GCC through Eligible Compilation Process.
 
-  As for GCC and Eligible Compilation Process, 
+  As for GCC and Eligible Compilation Process,
   see <http://www.gnu.org/licenses/gcc-exception-3.1.html>.
 
 */
@@ -2013,30 +2013,30 @@ typedef struct  iodbtlmng_sort {
 /* cnc_rdmag_property:read of magazineproperty data */
 /* cnc_wrmag_property:write of magazineproperty data */
 typedef struct  iodbmagprty {
-	short         mag ;	
-	short         reserve_s ;	
-	unsigned char mag_info ;	
+	short         mag ;
+	short         reserve_s ;
+	unsigned char mag_info ;
 	char          reserve[3] ;
-	short         mt_line ;	
-	short         mt_row ;	
-	long          cstm[4] ;	
+	short         mt_line ;
+	short         mt_row ;
+	long          cstm[4] ;
 } IODBMAGPRTY;
 
 /* cnc_rdpot_property:read of potproperty data */
 /* cnc_wrpot_property:write of potproperty data */
 typedef struct  iodbpotprty {
-	short           tool_no ;	
-	short           pot_type ;	
-	unsigned char   pot_info1 ;	
-	unsigned char   pot_info2 ;	
+	short           tool_no ;
+	short           pot_type ;
+	unsigned char   pot_info1 ;
+	unsigned char   pot_info2 ;
 	char            reserve[2] ;
-	long            cstm[10] ;	
+	long            cstm[10] ;
 } IODBPOTPRTY;
 
 /* cnc_delmag_property:delete of magazineproperty data */
 typedef struct  iodbmagprty2 {
-	short           mag ;	
-	short           reserve ;	
+	short           mag ;
+	short           reserve ;
 } IODBMAGPRTY2;
 
 /* cnc_magazinesrch:Search  magazine management data */
@@ -2049,7 +2049,7 @@ typedef struct  idbtlm_srchdt {
 
 typedef struct  iodbtlmag_srchinfo {
     IODBTLMAG2	startInfo;
-    IODBTLMAG	result;	
+    IODBTLMAG	result;
 } IODBTLMAG_SRCHINFO;
 
 /* cnc_tool_srh_free_min_num:Serch free number */
@@ -2108,7 +2108,7 @@ typedef struct  idbtlmgr_add_info {
 typedef struct  iodbtlmgr_page {
     union {
         IODBTLMGR_EDG edg;      /*$ data no and edge no $*/
-        struct {                
+        struct {
             IODBTLMGR_EDG s_edg;/*$ start data no and start edge no $*/
             IODBTLMGR_EDG e_edg;/*$ end data no and end edge no $*/
         } page;
@@ -2318,11 +2318,11 @@ typedef struct odbophis4 {/*--*/
             short   dummy1;
             long    g_modal[10];/* G code Modal */
             char    g_dp[10];   /* #7:1 Block */
-                                /* #6`#0 dp*/
+                                /* #6ï¿½`#0 dp*/
             short   dummy2;
             long    a_modal[10];/* B,D,E,F,H,M,N,O,S,T code Modal */
             char    a_dp[10];   /* #7:1 Block */
-                                /* #6`#0 dp*/
+                                /* #6ï¿½`#0 dp*/
             short   dummy3;
             long    abs_pos[32];/* Abs pos */
             char    abs_dp[32]; /* Abs dp  */
@@ -2347,11 +2347,11 @@ volatile    char    alm_msg[64];/* alarm message */
             short   dummy1;
             long    g_modal[10];/* G code Modal */
             char    g_dp[10];   /* #7:1 Block */
-                                /* #6`#0 dp*/
+                                /* #6ï¿½`#0 dp*/
             short   dummy2;
             long    a_modal[10];/* B,D,E,F,H,M,N,O,S,T code Modal */
             char    a_dp[10];   /* #7:1 Block */
-                                /* #6`#0 dp*/
+                                /* #6ï¿½`#0 dp*/
             short   dummy3;
             long    abs_pos[32];/* Abs pos */
             char    abs_dp[32]; /* Abs dp  */
@@ -2548,11 +2548,11 @@ typedef struct odbahis5 {
         char    alm_msg[64]; /* alarm message */
 		long    g_modal[10]; /* G code Modal */
 		char    g_dp[10];    /* #7:1 Block */
-		                     /* #6`#0 dp*/
+		                     /* #6ï¿½`#0 dp*/
         short   dummy1;
 		long    a_modal[10]; /* B,D,E,F,H,M,N,O,S,T code Modal */
 		char    a_dp[10];    /* #7:1 Block */
-		                     /* #6`#0 dp*/
+		                     /* #6ï¿½`#0 dp*/
         short   dummy2;
 		long    abs_pos[32]; /* Abs pos */
 		char    abs_dp[32];  /* Abs dp */
@@ -2660,7 +2660,7 @@ typedef struct odbshp {
     short           ob_type ;       /* object type */
     unsigned short  obj_no ;        /* object number */
     unsigned short  shp_no ;        /* shape number */
-    unsigned short  fig_ele[10] ;    /* figure element 1`6 */
+    unsigned short  fig_ele[10] ;    /* figure element 1ï¿½`6 */
     long            ref_pos[3] ;    /* reference position */
     long            tool_ref[3] ;   /* tool reference position */
     long            tool_dir[3] ;   /* tool direction */
@@ -2697,7 +2697,7 @@ typedef struct odbmva {
     struct {
         unsigned short  axis_no ;   /* axis number */
         unsigned short  mov_dir ;   /* moving direction */
-    } lin_ax[3] ;                   /* line axis(1`3) */
+    } lin_ax[3] ;                   /* line axis(1ï¿½`3) */
 
     struct {
         unsigned short  axis_no ;   /* axis number */
@@ -2706,18 +2706,18 @@ typedef struct odbmva {
         long            inc_ang ;   /* inclination angle */
         unsigned short  rot_dir ;   /* rotational direction */
         short           reserve ;   /* reserve */
-    } rot_ax[2] ;                   /* rotating axis(1`2) */
+    } rot_ax[2] ;                   /* rotating axis(1ï¿½`2) */
 
     struct {
         unsigned short  master ;    /* master rotating axis */
         unsigned short  slave ;     /* slave rotating axis */
-    } rot_ele[6] ;                  /* rotating element(1`6) */
+    } rot_ele[6] ;                  /* rotating element(1ï¿½`6) */
 } ODBMVA ;
 
 /* cnc_rdtdicrntshapeinf:read current shape data */
 typedef struct odbcrntshp {
     long            fig_type ;
-	long 			reserve; 
+	long 			reserve;
     union {
 	    struct {
 	        double	base_pos[3] ;
@@ -2898,9 +2898,9 @@ typedef struct odbsramstat {
 
 /* read DMG Netservice status information */
 typedef struct out_statinfo_dmg {
-     short  dummy[1];     /* –¢g—p                       */
-     short  dmg;          /* DMG NetserviceƒXƒe[ƒ^ƒXî•ñ */
-     short  dummy1[7];    /* –¢g—p                       */
+     short  dummy[1];     /* ï¿½ï¿½ï¿½gï¿½p                       */
+     short  dmg;          /* DMG Netserviceï¿½Xï¿½eï¿½[ï¿½^ï¿½Xï¿½ï¿½ï¿½ */
+     short  dummy1[7];    /* ï¿½ï¿½ï¿½gï¿½p                       */
 } OUT_STATINF_DMG ;
 
 /* cnc_alarm:read alarm status */
@@ -4568,11 +4568,11 @@ typedef struct iodbmlttl {
     char    m_radius_dec;
     char    m_angle_dec;
     char    x_axis_dec;
-    char    y_axis_dec; 
+    char    y_axis_dec;
     char    tl_size_i_dec;
     char    tl_size_j_dec;
-    char    tl_angle_dec; 
-    char    reserve; 
+    char    tl_angle_dec;
+    char    reserve;
     long    reserves[5];
 } IODBMLTTL ;
 
@@ -4839,7 +4839,7 @@ typedef struct unsolicmsg_type_prm {
         struct {
             unsigned short  path;
             char            dummy2[2];
-            unsigned long   no; 
+            unsigned long   no;
             unsigned long   num;
         } macro;
     } prm;
@@ -5823,37 +5823,37 @@ typedef struct tagODBIFSBSYSALM {
 } ODBIFSBSYSALM;
 
 typedef struct tagODBIFSBFSSBUNT {
-    short   slv_unt_num;    /* ƒXƒŒ[ƒuƒ†ƒjƒbƒg”Ô† */
-    short   fssb_unt_num;   /* FSSBƒ†ƒjƒbƒg”Ô† */
-    char    name[4];        /* –¼Ì */
+    short   slv_unt_num;    /* ï¿½Xï¿½ï¿½ï¿½[ï¿½uï¿½ï¿½ï¿½jï¿½bï¿½gï¿½Ôï¿½ */
+    short   fssb_unt_num;   /* FSSBï¿½ï¿½ï¿½jï¿½bï¿½gï¿½Ôï¿½ */
+    char    name[4];        /* ï¿½ï¿½ï¿½ï¿½ */
 } ODBIFSBFSSBUNT;
 
 typedef struct tagODBIFSBCOMSTATDTL {
-    long    error_inf;      /* ƒGƒ‰[î•ñ */
-    long    jitter_inf;     /* ƒWƒbƒ^î•ñ */
-    char    n_warning;      /* ƒmƒCƒYƒ[ƒjƒ“ƒOƒtƒ‰ƒO */
-    char    j_warning;      /* ƒWƒbƒ^ƒ[ƒjƒ“ƒOƒtƒ‰ƒO */
-    char    reserve[2];     /* ƒŠƒU[ƒu */
+    long    error_inf;      /* ï¿½Gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ */
+    long    jitter_inf;     /* ï¿½Wï¿½bï¿½^ï¿½ï¿½ï¿½ */
+    char    n_warning;      /* ï¿½mï¿½Cï¿½Yï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½tï¿½ï¿½ï¿½O */
+    char    j_warning;      /* ï¿½Wï¿½bï¿½^ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½tï¿½ï¿½ï¿½O */
+    char    reserve[2];     /* ï¿½ï¿½ï¿½Uï¿½[ï¿½u */
 } ODBIFSBCOMSTATDTL;
 
 typedef struct tagODBIFSBWARNINGMSG {
-    short   line;     /* ƒ[ƒjƒ“ƒO”­¶ƒ‰ƒCƒ“”Ô† */
-    short   slv_src;  /* ƒ[ƒjƒ“ƒO”­¶ƒXƒŒ[ƒu”Ô†(’ÊMŒ³) */
-    short   slv_dst;  /* ƒ[ƒjƒ“ƒO”­¶ƒXƒŒ[ƒu”Ô†(’ÊMæ) */
-    short   type;     /* ”­¶ƒ[ƒjƒ“ƒOƒ^ƒCƒv */
-    char    wm_typ[32]; /* ƒ[ƒjƒ“ƒOƒƒbƒZ[ƒW(Ü°Æİ¸Şí—Ş) */
-    char    wm_pnt[32]; /* ƒ[ƒjƒ“ƒOƒƒbƒZ[ƒW(Ü°Æİ¸Ş‰ÓŠ) */
+    short   line;     /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Ôï¿½ */
+    short   slv_src;  /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½[ï¿½uï¿½Ôï¿½(ï¿½ÊMï¿½ï¿½) */
+    short   slv_dst;  /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½[ï¿½uï¿½Ôï¿½(ï¿½ÊMï¿½ï¿½) */
+    short   type;     /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½^ï¿½Cï¿½v */
+    char    wm_typ[32]; /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½W(Ü°ï¿½İ¸Şï¿½ï¿½) */
+    char    wm_pnt[32]; /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½W(Ü°ï¿½İ¸Ş‰Óï¿½) */
 } ODBIFSBWARNINGMSG;
 
 typedef struct tagODBIFSBWARNHSTMSG {
-    short   year;       /* ƒ[ƒjƒ“ƒO”­¶‚µ‚½”N */
-    char    month;      /*                   Œ */
-    char    day;        /*                   “ú */
-    char    hour;       /*                    */
-    char    minute;     /*                   •ª */
-    char    second;     /*                   •b */
+    short   year;       /* ï¿½ï¿½ï¿½[ï¿½jï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½N */
+    char    month;      /*                   ï¿½ï¿½ */
+    char    day;        /*                   ï¿½ï¿½ */
+    char    hour;       /*                   ï¿½ï¿½ */
+    char    minute;     /*                   ï¿½ï¿½ */
+    char    second;     /*                   ï¿½b */
     char    dummy;
-    ODBIFSBWARNINGMSG   msg_dat;    /*$ ƒƒbƒZ[ƒW $*/
+    ODBIFSBWARNINGMSG   msg_dat;    /*$ ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½W $*/
 } ODBIFSBWARNHSTMSG;
 
 /*-----------------------------------*/
@@ -9102,7 +9102,7 @@ typedef struct odbptcnvinfo2{
 }ODBPTCNVINFO2 ;
 
 typedef struct odbaxsts_bg {
-    long   flag;    
+    long   flag;
 } ODBAXSTS_BG;
 
 /*--- cnc_rdpalaxis ---*/
@@ -9214,12 +9214,12 @@ typedef struct odbsuodata {
 /*----------------------------*/
 /*--- cnc_rdmcdfinfo -------------*/
 typedef struct odbfilestatus {
-    unsigned long  size;      
-    unsigned char  min;       
-    unsigned char  hour;      
-    unsigned char  day;       
-    unsigned char  month;     
-    unsigned short year;      
+    unsigned long  size;
+    unsigned char  min;
+    unsigned char  hour;
+    unsigned char  day;
+    unsigned char  month;
+    unsigned short year;
     unsigned char  reserve[2] ;
     char           filename[20];
 }ODBFILESTATUS;
@@ -9366,7 +9366,7 @@ typedef struct idbrbgroup{
 	unsigned char robot_program;
 	char nc_program_folder[213];
 	char nc_program_name[33];
-}IDBRBGROUP; 
+}IDBRBGROUP;
 
 typedef struct idbrbsignal{
 	char name[76];
@@ -9390,8 +9390,8 @@ typedef struct iodbrbcomset{
 	IODBRBTOPSIG di_top;
 	IODBRBTOPSIG do_top;
 	IODBRBPOWERSIG power_on;
-	unsigned short di_offset; 
-	unsigned short do_offset; 
+	unsigned short di_offset;
+	unsigned short do_offset;
 	unsigned char property;
 	char reserve[3];
 }IODBRBCOMSET;
@@ -9433,7 +9433,7 @@ typedef struct indexposdat{
     char            setting;
     char            dummy[3];
 } IODBINDEXPOSDAT;
-/*--- cnc_rdindexinfo ---------------*/	
+/*--- cnc_rdindexinfo ---------------*/
 typedef struct odbindexinfo{
     unsigned short  mode;
     short           nc_ax;
@@ -9632,12 +9632,12 @@ typedef struct iodbpwrctl {
     short    power_min;
     short    pwr_sp_zr;
     short    freq_min;
-    short    freq_sp_zr; 
-    short    duty_min;   
-    short    duty_sp_zr; 
-    char     feed_r_dec; 
-    char     reserve;    
-    long     feed_r;     
+    short    freq_sp_zr;
+    short    duty_min;
+    short    duty_sp_zr;
+    char     feed_r_dec;
+    char     reserve;
+    long     feed_r;
     short    ag_press_min ;
     short    ag_press_sp_zr ;
     short    reserves[4] ;
@@ -9714,18 +9714,18 @@ typedef struct odbplsdata {
 	short	channel_state;	/* Channel Connect State */
 	short	reserve1;		/* reserve */
 	short	reserve2;		/* reserve */
-	short	alarm[4];		/* Alarm Detail(CH1`4) */
-	short	cmd_val[4];		/* Command Value(CH1`4) */
+	short	alarm[4];		/* Alarm Detail(CH1ï¿½`4) */
+	short	cmd_val[4];		/* Command Value(CH1ï¿½`4) */
 	short	reserve3[4];		/* reserve */
-	long	total_val[4];	/* Total Value(CH1`4) */
+	long	total_val[4];	/* Total Value(CH1ï¿½`4) */
 	long	reserve4[4];	/* reserve */
 } ODBPLSDATA;
 
 /* cnc_rduvactpt2 : uv macro pointer */
 typedef struct odbuvmcrpt2 {
-	char    prog_name[248] ;    
-	long    blk_no ;       
-	long    uvblk_no ;     
+	char    prog_name[248] ;
+	long    blk_no ;
+	long    uvblk_no ;
 	long    mult_piece_no ;
     short   reserve[2] ;
 } ODBUVMCRPT2 ;
@@ -12727,7 +12727,7 @@ FWLIBAPI short WINAPI cnc_wrlrnprf( unsigned short, short, short, char *);
 /* Get option function information */
 FWLIBAPI short WINAPI cnc_rdoptfuncinfo(unsigned short, short);
 
-/* Send MDI key information */	
+/* Send MDI key information */
 FWLIBAPI short WINAPI cnc_sendkey(unsigned short, ODBKEYINFO *);
 
 /* Get CNC display language */
@@ -14824,7 +14824,7 @@ FWLIBAPI short WINAPI cnc_wr_sfsg_disp_stat( unsigned short, IODBSFSGDSPSTAT *sf
 /* 5 axis machining configuration selection function     */
 /*-------------------------------------------------------*/
 /* read 5-axis machining configuration data */
-FWLIBAPI short WINAPI cnc_s5s_rdparam(unsigned short FlibHndl, short set_num, short number, short axis, short length, IODBPSD *param); 
+FWLIBAPI short WINAPI cnc_s5s_rdparam(unsigned short FlibHndl, short set_num, short number, short axis, short length, IODBPSD *param);
 /* write 5-axis machining configuration data */
 FWLIBAPI short WINAPI cnc_s5s_wrparam(unsigned short FlibHndl, short set_num, short length, IODBPSD *param);
 /* read 5-axis machining configuration name */
@@ -14882,9 +14882,9 @@ FWLIBAPI short WINAPI cnc_wrpscdedge2(unsigned short ,short ,short *, IODBEDGE2 
 /* read processing condition file (edging data)  */
 FWLIBAPI short WINAPI cnc_rdpscdedge2(unsigned short ,short ,short *, IODBEDGE2 *) ;
 /* write processing condition file (power control data) */
-FWLIBAPI short WINAPI cnc_wrlpscdpwrctl(unsigned short ,short ,short *, IODBPWRCTL *); 
+FWLIBAPI short WINAPI cnc_wrlpscdpwrctl(unsigned short ,short ,short *, IODBPWRCTL *);
 /* read processing condition file (power control data)  */
-FWLIBAPI short WINAPI cnc_rdlpscdpwrctl(unsigned short ,short ,short *, IODBPWRCTL *); 
+FWLIBAPI short WINAPI cnc_rdlpscdpwrctl(unsigned short ,short ,short *, IODBPWRCTL *);
 /* read displacement */
 FWLIBAPI short WINAPI cnc_rdldsplc2(unsigned short ,IODBDSPLC *);
 /* write displacement */
@@ -14917,7 +14917,7 @@ FWLIBAPI short WINAPI cnc_rd2punchtl_ex( unsigned short, IODBPUNCH2_EX *) ;
 /*---------------------------------------*/
 /* Tilted Working Plane Command          */
 /*---------------------------------------*/
-FWLIBAPI short WINAPI cnc_twp_rdfcoord(unsigned short, char, ODBCOORD *); 
+FWLIBAPI short WINAPI cnc_twp_rdfcoord(unsigned short, char, ODBCOORD *);
 
 /*---------------------------------------*/
 /* Machining Condition Setting           */
@@ -14940,7 +14940,7 @@ FWLIBAPI short WINAPI cnc_getpaxispath(unsigned short, short *, short *);
 /*---------------------------------------*/
 /* read program alarm status             */
 /*---------------------------------------*/
-FWLIBAPI short WINAPI cnc_rdalarmchar(unsigned short, short *, short *); 
+FWLIBAPI short WINAPI cnc_rdalarmchar(unsigned short, short *, short *);
 
 /*---------------------------------------*/
 /* High Motion Compile (PMi-A only)      */

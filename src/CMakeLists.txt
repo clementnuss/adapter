@@ -1,4 +1,4 @@
-add_library (adapter_generic service.cpp adapter.cpp client.cpp condition.cpp cutting_tool.cpp device_datum.cpp logger.cpp server.cpp string_buffer.cpp)
+add_library(adapter_generic service.cpp adapter.cpp client.cpp condition.cpp cutting_tool.cpp device_datum.cpp logger.cpp server.cpp string_buffer.cpp)
 #find_package(Threads REQUIRED)
 #target_compile_options(adapter_generic PUBLIC "-pthread")
 

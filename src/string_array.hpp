@@ -40,38 +40,39 @@
  * exceeded. Used for storing the program codes
  */
 
-class StringArray
-{
+class StringArray {
 protected:
-  char **mArray;
-  int  mLength;
-  int  mSize;
+    char **mArray;
+    int mLength;
+    int mSize;
 
 public:
-  StringArray();
-  ~StringArray();
-  
-  int length() { return mLength; }
+    StringArray();
 
-  // Copies the string when it is appended
-  void append(const char *aString);
-  void clear();
+    ~StringArray();
 
-  // Getters
-  const char *stringAt(int index);
-  const char *operator[](int index) { return stringAt(index); }
+    int length() { return mLength; }
 
-  // File Handler method, should be another class...
-  // Returns file size.
-  int readFile(const char *aFileName);
+    // Copies the string when it is appended
+    void append(const char *aString);
+
+    void clear();
+
+    // Getters
+    const char *stringAt(int index);
+
+    const char *operator[](int index) { return stringAt(index); }
+
+    // File Handler method, should be another class...
+    // Returns file size.
+    int readFile(const char *aFileName);
 };
 
-inline const char *StringArray::stringAt(int index)
-{
-  if (index >= 0 && index < mLength)
-    return mArray[index];
-  else
-    return 0;
+inline const char *StringArray::stringAt(int index) {
+    if (index >= 0 && index < mLength)
+        return mArray[index];
+    else
+        return 0;
 }
 
 #endif

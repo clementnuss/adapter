@@ -39,6 +39,7 @@
 #include "threading.hpp"
 
 class DeviceDatum;
+
 class CuttingTool;
 
 const int INITIAL_MAX_DEVICE_DATA = 128;
@@ -50,114 +51,130 @@ const int INITIAL_MAX_DEVICE_DATA = 128;
  * Subclasses of this class will add the data values and interact with the
  * vendor specifc API. This class provides all the common functionality.
  */
-class Adapter
-{
+class Adapter {
 protected:
-  Server *mServer;         /* The socket server */
-  StringBuffer mBuffer;    /* A string buffer to hold the string we
+    Server *mServer;         /* The socket server */
+    StringBuffer mBuffer;    /* A string buffer to hold the string we
 			    * write to the streams */
-  int mMaxDatum;          /* The max number of device datums */
-  DeviceDatum **mDeviceData; /* A 0 terminated array of data value objects */
-  int mScanDelay;          /* How long to sleep (in ms) between scans */
-  int mNumDeviceData;     /* The number of data values */
-  int mPort;              /* The server port we bind to */
-  bool mDisableFlush;     /* Used for initial data collection */
-  int mHeartbeatFrequency; /* The frequency (ms) to heartbeat
+    int mMaxDatum;          /* The max number of device datums */
+    DeviceDatum **mDeviceData; /* A 0 terminated array of data value objects */
+    int mScanDelay;          /* How long to sleep (in ms) between scans */
+    int mNumDeviceData;     /* The number of data values */
+    int mPort;              /* The server port we bind to */
+    bool mDisableFlush;     /* Used for initial data collection */
+    int mHeartbeatFrequency; /* The frequency (ms) to heartbeat
 			    * server. Responds to Ping. Default 10 sec */
-  bool mRunning;
-  Client *mInitializeClient; /* If we are sending initial data to a client */
-  
+    bool mRunning;
+    Client *mInitializeClient; /* If we are sending initial data to a client */
+
 #ifdef THREADED
 #ifdef WIN32
-  HANDLE mServerThread;
+    HANDLE mServerThread;
 #else
-  pthread_t mServerThread;
+    pthread_t mServerThread;
 #endif
 #endif
-  MTCMutex mGatherLock;
-  
+    MTCMutex mGatherLock;
+
 protected:
-  void sleepMs(int aMs);
+    void sleepMs(int aMs);
 
-  /* Internal buffer sending methods */
-  void sendBuffer();
-  void sendDatum(DeviceDatum *aValue);
-  virtual void sendInitialData(Client *aClient);
-  virtual void sendChangedData();
-  virtual void flush();
-  void timestamp() { mBuffer.timestamp(); }
-  virtual void unavailable();
-  virtual void initializeDeviceDatum();
-  
-  virtual void addAsset(const char *aId, const char *aType, const char *aData);
-  virtual void updateAsset(const char *aId, const char *aData);
-  virtual void addAsset(CuttingTool *aTool);
-  virtual void updateAsset(CuttingTool *aTool);
-    
+    /* Internal buffer sending methods */
+    void sendBuffer();
+
+    void sendDatum(DeviceDatum *aValue);
+
+    virtual void sendInitialData(Client *aClient);
+
+    virtual void sendChangedData();
+
+    virtual void flush();
+
+    void timestamp() { mBuffer.timestamp(); }
+
+    virtual void unavailable();
+
+    virtual void initializeDeviceDatum();
+
+    virtual void addAsset(const char *aId, const char *aType, const char *aData);
+
+    virtual void updateAsset(const char *aId, const char *aData);
+
+    virtual void addAsset(CuttingTool *aTool);
+
+    virtual void updateAsset(CuttingTool *aTool);
+
 public:
-  Adapter(int aPort, int aScanDelay = 100);
-  ~Adapter();
-  
-  void readFromClients();
-  void connectToClients();
+    Adapter(int aPort, int aScanDelay = 100);
 
-  /* Start the server and never return */
+    ~Adapter();
+
+    void readFromClients();
+
+    void connectToClients();
+
+    /* Start the server and never return */
 #ifdef THREADED
-  bool startServerThread();
-  void serverThread();
-  int  waitUntilDone();
+    bool startServerThread();
+    void serverThread();
+    int  waitUntilDone();
 
-  // allow for subclasses to do some work when threaded
-  virtual void periodicWork() {}
+    // allow for subclasses to do some work when threaded
+    virtual void periodicWork() {}
 #endif
-  
-  void startServer();
-  void addDatum(DeviceDatum &aValue);
-  
-  /* Stop server */
-  virtual void stopServer();
 
-  /* Pure virtual method to get the data from the device. */
-  virtual void gatherDeviceData() = 0;
-  virtual void begin();
-  virtual void prepare();
-  virtual void cleanup();
+    void startServer();
 
-  /* For multithreaded async gathering */
-  virtual void beginGather(const char *aTs = NULL, bool aSweep = true);
-  virtual void completeGather();
+    void addDatum(DeviceDatum &aValue);
 
-  /* Overload this method to handle situation when all clients disconnect */
-  virtual void clientsDisconnected();
+    /* Stop server */
+    virtual void stopServer();
+
+    /* Pure virtual method to get the data from the device. */
+    virtual void gatherDeviceData() = 0;
+
+    virtual void begin();
+
+    virtual void prepare();
+
+    virtual void cleanup();
+
+    /* For multithreaded async gathering */
+    virtual void beginGather(const char *aTs = NULL, bool aSweep = true);
+
+    virtual void completeGather();
+
+    /* Overload this method to handle situation when all clients disconnect */
+    virtual void clientsDisconnected();
 };
 
 class AutoGather {
 public:
-  AutoGather(Adapter *anAdapter = NULL, const char *aTs = NULL, bool aSweep = true) 
-    : mAdapter(anAdapter) {
-    if (mAdapter != NULL)
-      mAdapter->beginGather(aTs, aSweep);
-  }
+    AutoGather(Adapter *anAdapter = NULL, const char *aTs = NULL, bool aSweep = true)
+            : mAdapter(anAdapter) {
+        if (mAdapter != NULL)
+            mAdapter->beginGather(aTs, aSweep);
+    }
 
-  void begin(Adapter *anAdapter, const char *aTs = NULL, bool aSweep = true) {
-    mAdapter = anAdapter;
-    if (mAdapter != NULL)
-      mAdapter->beginGather(aTs, aSweep);
-  }
+    void begin(Adapter *anAdapter, const char *aTs = NULL, bool aSweep = true) {
+        mAdapter = anAdapter;
+        if (mAdapter != NULL)
+            mAdapter->beginGather(aTs, aSweep);
+    }
 
-  void complete() {
-    if (mAdapter != NULL)
-      mAdapter->completeGather();
-    mAdapter = NULL;
-  }
+    void complete() {
+        if (mAdapter != NULL)
+            mAdapter->completeGather();
+        mAdapter = NULL;
+    }
 
-  ~AutoGather() {
-    if (mAdapter != NULL)
-      mAdapter->completeGather();
-  }
+    ~AutoGather() {
+        if (mAdapter != NULL)
+            mAdapter->completeGather();
+    }
 
 protected:
-  Adapter *mAdapter;
+    Adapter *mAdapter;
 };
 
 #endif

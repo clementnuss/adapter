@@ -13,14 +13,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
- 
+
 #include "internal.hpp"
 #include "fanuc_adapter.hpp"
 #include "server.hpp"
 #include "string_buffer.hpp"
 
-int main(int aArgc, const char *aArgv[])
-{  
-  FanucAdapter *adapter = new FanucAdapter(7878);
-  return adapter->main(aArgc, aArgv);  
+int main(int aArgc, const char *aArgv[]) {
+    FanucAdapter *adapter = new FanucAdapter(7878);
+    return adapter->main(aArgc, aArgv);
 }

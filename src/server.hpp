@@ -42,46 +42,50 @@ class Client;
 const int MAX_CLIENTS = 64;
 
 /* A socket server abstraction */
-class Server
-{
+class Server {
 protected:
-  SOCKET mSocket;
-  Client *mClients[MAX_CLIENTS + 1];
-  int mNumClients;
-  int mPort;
-  char mPong[32];
-  int mTimeout;
-  
-  MTCMutex mListLock;
-  
+    SOCKET mSocket;
+    Client *mClients[MAX_CLIENTS + 1];
+    int mNumClients;
+    int mPort;
+    char mPong[32];
+    int mTimeout;
+
+    MTCMutex mListLock;
+
 protected:
-  // Assumes the mutex is already locked.
-  void removeClientInternal(Client *aClient);
-  
-  // Locks the mutex.
-  void removeClient(Client *aClient);
-  
-  Client *addClient(Client *aClient);
-  unsigned int getTimestamp();
-  unsigned int deltaTimestamp(unsigned int, unsigned int);
-  
+    // Assumes the mutex is already locked.
+    void removeClientInternal(Client *aClient);
+
+    // Locks the mutex.
+    void removeClient(Client *aClient);
+
+    Client *addClient(Client *aClient);
+
+    unsigned int getTimestamp();
+
+    unsigned int deltaTimestamp(unsigned int, unsigned int);
+
 public:
-  Server(int aPort, int aHeartbeatFreq);
-  ~Server();
+    Server(int aPort, int aHeartbeatFreq);
 
-  // Returns the new client.
-  Client *connectToClients(); /* Client factory */
+    ~Server();
 
-  /* I/O methods */
-  void readFromClients();         /* discard data on read side of
+    // Returns the new client.
+    Client *connectToClients(); /* Client factory */
+
+    /* I/O methods */
+    void readFromClients();         /* discard data on read side of
 					                              sockets */
-  void sendToClients(const char *aString);
-  void sendToClient(Client *aClient, const char *aString);
-  
-  /* Getters */
-  int numClients() { return mNumClients; }
-  bool hasClients() { return mNumClients > 0; }
-  
+    void sendToClients(const char *aString);
+
+    void sendToClient(Client *aClient, const char *aString);
+
+    /* Getters */
+    int numClients() { return mNumClients; }
+
+    bool hasClients() { return mNumClients > 0; }
+
 };
 
 #endif

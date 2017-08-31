@@ -38,54 +38,49 @@
 #include "logger.hpp"
 
 Adapter::Adapter(int aPort, int aScanDelay)
- : mNumDeviceData(0), mInitializeClient(NULL)
-{
-  mScanDelay = aScanDelay;
-  mServer = 0;
-  mPort = aPort;
-  mHeartbeatFrequency = 10000;
-  mMaxDatum = INITIAL_MAX_DEVICE_DATA;
-  mRunning = false;
-  mDeviceData = new DeviceDatum*[mMaxDatum];
+        : mNumDeviceData(0), mInitializeClient(NULL) {
+    mScanDelay = aScanDelay;
+    mServer = 0;
+    mPort = aPort;
+    mHeartbeatFrequency = 10000;
+    mMaxDatum = INITIAL_MAX_DEVICE_DATA;
+    mRunning = false;
+    mDeviceData = new DeviceDatum *[mMaxDatum];
 #ifdef THREADED
-  mServerThread = 0;
+    mServerThread = 0;
 #endif
 }
 
-Adapter::~Adapter()
-{
-  mRunning = false;
-  if (mServer)
-    delete mServer;
+Adapter::~Adapter() {
+    mRunning = false;
+    if (mServer)
+        delete mServer;
 
-  delete[] mDeviceData;
+    delete[] mDeviceData;
 }
 
 /* Add a data value to the list of data values */
-void Adapter::addDatum(DeviceDatum &aValue)
-{
-  if (mNumDeviceData >= mMaxDatum - 1)
-  {
-    DeviceDatum** devData = new DeviceDatum*[mMaxDatum * 2];
-    memcpy(devData, mDeviceData, sizeof(DeviceDatum*) * mMaxDatum);
-    delete[] mDeviceData;
-    
-    mDeviceData = devData;
-    mMaxDatum *= 2;
-  }
-  
-  mDeviceData[mNumDeviceData++] = &aValue;
-  mDeviceData[mNumDeviceData] = 0;
+void Adapter::addDatum(DeviceDatum &aValue) {
+    if (mNumDeviceData >= mMaxDatum - 1) {
+        DeviceDatum **devData = new DeviceDatum *[mMaxDatum * 2];
+        memcpy(devData, mDeviceData, sizeof(DeviceDatum *) * mMaxDatum);
+        delete[] mDeviceData;
+
+        mDeviceData = devData;
+        mMaxDatum *= 2;
+    }
+
+    mDeviceData[mNumDeviceData++] = &aValue;
+    mDeviceData[mNumDeviceData] = 0;
 }
 
-void Adapter::sleepMs(int aMs)
-{
+void Adapter::sleepMs(int aMs) {
 #ifndef WIN32
     usleep(aMs * 1000);
 #else
     Sleep(aMs);
 #endif
-  
+
 }
 
 #if THREADED
@@ -126,7 +121,7 @@ int Adapter::waitUntilDone()
     if (res == WAIT_OBJECT_0)
     {
       if (GetExitCodeThread(mServerThread, &res))
-	ret = res;
+    ret = res;
     }
   }
   return ret;
@@ -194,23 +189,21 @@ void Adapter::serverThread()
 /*
  * Reads from clients, either blocking or polling.
  */
-void Adapter::readFromClients() 
-{
-  mServer->readFromClients();
+void Adapter::readFromClients() {
+    mServer->readFromClients();
 }
 
 /*
  * Checks for new client connections, either blocking or polling.
  */
 
-void Adapter::connectToClients()
-{
-  /* Check if we have any new clients */
-  Client *client = mServer->connectToClients();
-  if (client != NULL)
-    sendInitialData(client);
+void Adapter::connectToClients() {
+    /* Check if we have any new clients */
+    Client *client = mServer->connectToClients();
+    if (client != NULL)
+        sendInitialData(client);
 }
- 
+
 /*  
  * This is the main loop of the application. Once the server is started and 
  * the application runs forever until it is killed. The process follows this flow:
@@ -224,233 +217,201 @@ void Adapter::connectToClients()
  *      send the data values that have changed to the clients
  *    Sleep for a few millies and repeat.
  */
-void Adapter::startServer()
-{  
-  if (gLogger == NULL) gLogger = new Logger();
-  
-  mServer = new Server(mPort, mHeartbeatFrequency);  
-  mRunning = true;
-  
-  /* Process untill stopped */
-  while (mRunning) 
-  {
-    /* Check if we have any new clients */
-    connectToClients();
-    
-    /* Read and all data from the clients */
-    readFromClients();
-    
-    /* Don't bother getting data if we don't have anyone to read it */
-    if (mServer->numClients() > 0)
-    {
-      MTCAutoLock lock(mGatherLock);
-      
-      begin();
-      mBuffer.timestamp();
-      gatherDeviceData();
-      prepare();
-      sendChangedData();
-      mBuffer.reset();
-      cleanup();
+void Adapter::startServer() {
+    if (gLogger == NULL) gLogger = new Logger();
+
+    mServer = new Server(mPort, mHeartbeatFrequency);
+    mRunning = true;
+
+    /* Process untill stopped */
+    while (mRunning) {
+        /* Check if we have any new clients */
+        connectToClients();
+
+        /* Read and all data from the clients */
+        readFromClients();
+
+        /* Don't bother getting data if we don't have anyone to read it */
+        if (mServer->numClients() > 0) {
+            MTCAutoLock lock(mGatherLock);
+
+            begin();
+            mBuffer.timestamp();
+            gatherDeviceData();
+            prepare();
+            sendChangedData();
+            mBuffer.reset();
+            cleanup();
+        } else if (mServer->hasClients()) {
+            clientsDisconnected();
+        }
+
+        sleepMs(mScanDelay);
     }
-    else if (mServer->hasClients())
-    {
-      clientsDisconnected();
+
+    delete mServer;
+    mServer = NULL;
+}
+
+void Adapter::begin() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        value->begin();
     }
-    
-    sleepMs(mScanDelay);
-  }
-  
-  delete mServer;
-  mServer = NULL;
 }
 
-void Adapter::begin()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    value->begin();
-  }
+void Adapter::prepare() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        value->prepare();
+    }
 }
 
-void Adapter::prepare()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    value->prepare();
-  }
+void Adapter::cleanup() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        value->cleanup();
+    }
 }
 
-void Adapter::cleanup()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    value->cleanup();
-  }
+void Adapter::beginGather(const char *aTs, bool aSweep) {
+    mGatherLock.lock();
+
+    if (aSweep) begin();
+
+    mBuffer.reset();
+    if (aTs != NULL)
+        mBuffer.setTimestamp(aTs);
+    else
+        mBuffer.timestamp();
 }
 
-void Adapter::beginGather(const char *aTs, bool aSweep)
-{
-  mGatherLock.lock();
+void Adapter::completeGather() {
+    prepare();
+    sendChangedData();
+    cleanup();
 
-  if (aSweep) begin();
-  
-  mBuffer.reset();
-  if (aTs != NULL)
-    mBuffer.setTimestamp(aTs);
-  else
-    mBuffer.timestamp();
+    mGatherLock.unlock();
 }
 
-void Adapter::completeGather()
-{
-  prepare();
-  sendChangedData();
-  cleanup();
-  
-  mGatherLock.unlock();
-}
-
-void Adapter::stopServer()
-{    
-  mRunning = false;
+void Adapter::stopServer() {
+    mRunning = false;
 }
 
 /* Send a single value to the buffer. */
-void Adapter::sendDatum(DeviceDatum *aValue)
-{
-  if (aValue->requiresFlush())
-    sendBuffer();
-  aValue->append(mBuffer);
-  if (aValue->requiresFlush())
-    sendBuffer();
+void Adapter::sendDatum(DeviceDatum *aValue) {
+    if (aValue->requiresFlush())
+        sendBuffer();
+    aValue->append(mBuffer);
+    if (aValue->requiresFlush())
+        sendBuffer();
 }
 
 /* Send the buffer to the clients. Only sends if there is something in the buffer. */
-void Adapter::sendBuffer()
-{
-  if (mServer != 0 && mBuffer.length() > 0)
-  {
-    mBuffer.append("\n");
-    if (mInitializeClient != NULL)
-      mServer->sendToClient(mInitializeClient, mBuffer);
-    else
-      mServer->sendToClients(mBuffer);
-    mBuffer.reset();  
-  }
+void Adapter::sendBuffer() {
+    if (mServer != 0 && mBuffer.length() > 0) {
+        mBuffer.append("\n");
+        if (mInitializeClient != NULL)
+            mServer->sendToClient(mInitializeClient, mBuffer);
+        else
+            mServer->sendToClients(mBuffer);
+        mBuffer.reset();
+    }
 }
 
 /* Send the initial values to a client */
-void Adapter::sendInitialData(Client *aClient)
-{
-  MTCAutoLock lock(mGatherLock);
+void Adapter::sendInitialData(Client *aClient) {
+    MTCAutoLock lock(mGatherLock);
 
-  mInitializeClient = aClient;
-  mDisableFlush = true;
-  mBuffer.timestamp();
-  gatherDeviceData();
-  
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    if (value->hasInitialValue())
-      sendDatum(value);
-  }
-  sendBuffer();
+    mInitializeClient = aClient;
+    mDisableFlush = true;
+    mBuffer.timestamp();
+    gatherDeviceData();
 
-  mDisableFlush = false;
-  mInitializeClient = NULL;
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        if (value->hasInitialValue())
+            sendDatum(value);
+    }
+    sendBuffer();
+
+    mDisableFlush = false;
+    mInitializeClient = NULL;
 }
 
 /* Send the values that have changed to the clients */
-void Adapter::sendChangedData()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    if (value->changed())
-      sendDatum(value);
-  }  
-  sendBuffer();
+void Adapter::sendChangedData() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        if (value->changed())
+            sendDatum(value);
+    }
+    sendBuffer();
 }
 
-void Adapter::flush()
-{
-  if (!mDisableFlush)
-  {
-    sendChangedData();
-    mBuffer.reset();
+void Adapter::flush() {
+    if (!mDisableFlush) {
+        sendChangedData();
+        mBuffer.reset();
+        mBuffer.timestamp();
+    }
+}
+
+void Adapter::clientsDisconnected() {
+    /* Do nothing for now ... */
+    gLogger->info("All clients have disconnected");
+}
+
+void Adapter::unavailable() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        value->unavailable();
+    }
+    flush();
+}
+
+void Adapter::initializeDeviceDatum() {
+    for (int i = 0; i < mNumDeviceData; i++) {
+        DeviceDatum *value = mDeviceData[i];
+        value->initialize();
+    }
+    flush();
+}
+
+void Adapter::addAsset(const char *aId, const char *aType, const char *aData) {
+    sendBuffer();
     mBuffer.timestamp();
-  }
+
+    mBuffer.append("|@ASSET@|");
+    mBuffer.append(aId);
+    mBuffer.append("|");
+    mBuffer.append(aType);
+    mBuffer.append("|--multiline--ABCD\n");
+    mBuffer.append(aData);
+    mBuffer.append("\n--multiline--ABCD");
+
+    sendBuffer();
+    mBuffer.timestamp();
 }
 
-void Adapter::clientsDisconnected()
-{
-  /* Do nothing for now ... */
-  gLogger->info("All clients have disconnected");
+void Adapter::updateAsset(const char *aId, const char *aData) {
+    sendBuffer();
+    mBuffer.timestamp();
+
+    mBuffer.append("|@UPDATE_ASSET@|");
+    mBuffer.append(aId);
+    mBuffer.append("|");
+    mBuffer.append(aData);
+
+    sendBuffer();
+    mBuffer.timestamp();
 }
 
-void Adapter::unavailable()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    value->unavailable();
-  }
-  flush();
+void Adapter::addAsset(CuttingTool *aTool) {
+    addAsset(aTool->getAssetId().c_str(), "CuttingTool", aTool->toString().c_str());
 }
 
-void Adapter::initializeDeviceDatum()
-{
-  for (int i = 0; i < mNumDeviceData; i++)
-  {
-    DeviceDatum *value = mDeviceData[i];
-    value->initialize();
-  }
-  flush();
-}
-
-void Adapter::addAsset(const char *aId, const char *aType, const char *aData)
-{
-  sendBuffer();
-  mBuffer.timestamp();
-
-  mBuffer.append("|@ASSET@|");
-  mBuffer.append(aId);
-  mBuffer.append("|");
-  mBuffer.append(aType);
-  mBuffer.append("|--multiline--ABCD\n");
-  mBuffer.append(aData);
-  mBuffer.append("\n--multiline--ABCD");
-  
-  sendBuffer();
-  mBuffer.timestamp();
-}
-
-void Adapter::updateAsset(const char *aId, const char *aData)
-{
-  sendBuffer();
-  mBuffer.timestamp();
-
-  mBuffer.append("|@UPDATE_ASSET@|");
-  mBuffer.append(aId);
-  mBuffer.append("|");
-  mBuffer.append(aData);  
-
-  sendBuffer();
-  mBuffer.timestamp();
-}
-
-void Adapter::addAsset(CuttingTool *aTool)
-{
-  addAsset(aTool->getAssetId().c_str(), "CuttingTool", aTool->toString().c_str());
-}
-
-void Adapter::updateAsset(CuttingTool *aTool)
-{
-  updateAsset(aTool->getAssetId().c_str(), aTool->toString().c_str());  
+void Adapter::updateAsset(CuttingTool *aTool) {
+    updateAsset(aTool->getAssetId().c_str(), aTool->toString().c_str());
 }
 

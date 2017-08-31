@@ -41,8 +41,9 @@
 
 class DeviceDatum;
 namespace YAML {
-  class Parser;
-  class Node;
+    class Parser;
+
+    class Node;
 }
 
 #define SET_WITH_DEFAULT(node, key, value, def) \
@@ -59,86 +60,87 @@ namespace YAML {
 // value of the register will manifest as a typed value or a
 // conditional that will map to an event and be represented by a
 // state. 
-class Register
-{
+class Register {
 public:
-  enum EType 
-  {
-    FLOAT_64,
-    FLOAT_32,
-    INTEGER_32,
-    INTEGER_16,
-    INTEGER_8,
-    BOOL,
-    BIT,
-    CONDITION,
-    TEXT
-  };
+    enum EType {
+        FLOAT_64,
+        FLOAT_32,
+        INTEGER_32,
+        INTEGER_16,
+        INTEGER_8,
+        BOOL,
+        BIT,
+        CONDITION,
+        TEXT
+    };
 
-  Register(EType aType, int aOffset, bool aTimeSeries = false) {
-    mType = aType;
-    mOffset = aOffset;
-    mTimeseries = aTimeSeries;
-  }
-  ~Register();
-  
-  Register(Register &aRegister) {
-    mType = aRegister.mType;
-    mOffset = aRegister.mOffset;
-    mTimeseries = aRegister.mTimeseries;
-  }
+    Register(EType aType, int aOffset, bool aTimeSeries = false) {
+        mType = aType;
+        mOffset = aOffset;
+        mTimeseries = aTimeSeries;
+    }
+
+    ~Register();
+
+    Register(Register &aRegister) {
+        mType = aRegister.mType;
+        mOffset = aRegister.mOffset;
+        mTimeseries = aRegister.mTimeseries;
+    }
 
 protected:
-  EType mType;
-  int mOffset;
-  bool mTimeseries;
-  double mScaler;
-  int mScalerOffset;
-  int mCount;
+    EType mType;
+    int mOffset;
+    bool mTimeseries;
+    double mScaler;
+    int mScalerOffset;
+    int mCount;
 
-  DeviceDatum *mDatum;
+    DeviceDatum *mDatum;
 };
 
-class RegisterSet
-{
-  void addRegister(Register &aRegister) { mRegisters.push_back(&aRegister); }
-  
-protected:
-  int mAddress;
-  int mLength;
-  int mCount;
+class RegisterSet {
+    void addRegister(Register &aRegister) { mRegisters.push_back(&aRegister); }
 
-  std::vector<Register*> mRegisters;
+protected:
+    int mAddress;
+    int mLength;
+    int mCount;
+
+    std::vector<Register *> mRegisters;
 };
 
-class Configuration
-{
+class Configuration {
 public:
-  Configuration();
-  virtual ~Configuration();
+    Configuration();
 
-  virtual void parse(std::istream &aStream, int aPort = 7878, int aDelay = 1000,
-                     int aTimeout = 10000, const char *aService = "MTConnect Adapter");
+    virtual ~Configuration();
 
-  int getPort() const { return mPort; }
-  int getScanDelay() const { return mScanDelay; }
-  int getTimeout() const { return mTimeout; }
-  const std::string &getServiceName() const { return mServiceName; }
+    virtual void parse(std::istream &aStream, int aPort = 7878, int aDelay = 1000,
+                       int aTimeout = 10000, const char *aService = "MTConnect Adapter");
 
-  void setPort(int aPort) { mPort = aPort; }
-  
-  RegisterSet *getRegisters(std::string &aName);
+    int getPort() const { return mPort; }
+
+    int getScanDelay() const { return mScanDelay; }
+
+    int getTimeout() const { return mTimeout; }
+
+    const std::string &getServiceName() const { return mServiceName; }
+
+    void setPort(int aPort) { mPort = aPort; }
+
+    RegisterSet *getRegisters(std::string &aName);
 
 protected:
-  virtual void parse(YAML::Node &aDoc, int aPort, int aDelay, int aTimeout, const char *aService); 
+    virtual void parse(YAML::Node &aDoc, int aPort, int aDelay, int aTimeout, const char *aService);
 
 protected:
-  int mPort;
-  int mScanDelay;
-  int mTimeout;
-  std::string mServiceName;
-  
-  std::map<std::string, RegisterSet*> mRegisters;
+    int mPort;
+    int mScanDelay;
+    int mTimeout;
+    std::string mServiceName;
+
+    std::map<std::string, RegisterSet *> mRegisters;
 };
 
 #endif

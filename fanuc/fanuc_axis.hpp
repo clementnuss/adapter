@@ -13,48 +13,48 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
- 
- 
+
+
 #include "device_datum.hpp"
 #include "condition.hpp"
 #include "adapter.hpp"
 #include <string>
 #include "fwlib32.h"
 
-class FanucAxis
-{
+class FanucAxis {
 public:
-  FanucAxis(Adapter *anAdapter, std::string aPrefix, int anIndex);
-  ~FanucAxis() {}
-                                             
-  bool gatherData(ODBDY2 *aDynamic, ODBSVLOAD *aLoads);
+    FanucAxis(Adapter *anAdapter, std::string aPrefix, int anIndex);
+
+    ~FanucAxis() {}
+
+    bool gatherData(ODBDY2 *aDynamic, ODBSVLOAD *aLoads);
 
 public:
-  int mIndex;
-  
-  Sample mActual;
-  Sample mLoad;
+    int mIndex;
 
-  double mDivisor;
-  
-  Condition mTravel;
-  Condition mOverheat;
-  Condition mServo;
+    Sample mActual;
+    Sample mLoad;
+
+    double mDivisor;
+
+    Condition mTravel;
+    Condition mOverheat;
+    Condition mServo;
 };
 
-class FanucSpindle
-{
+class FanucSpindle {
 public:
-  FanucSpindle(Adapter *anAdapter, std::string aPrefix, int anIndex);
-  ~FanucSpindle() {}
+    FanucSpindle(Adapter *anAdapter, std::string aPrefix, int anIndex);
 
-  bool gatherData(ODBSPLOAD *aLoads, ODBACT2 *aSpeeds);
+    ~FanucSpindle() {}
+
+    bool gatherData(ODBSPLOAD *aLoads, ODBACT2 *aSpeeds);
 
 public:
-  int mIndex;
-  
-  Sample mSpeed;
-  Sample mLoad;
+    int mIndex;
 
-  Condition mServo;
+    Sample mSpeed;
+    Sample mLoad;
+
+    Condition mServo;
 };

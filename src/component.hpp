@@ -43,18 +43,20 @@ class Adapter;
 // of Component will create the most common data items and conditions
 // for that component. Additional data items can be added for each
 // specific implementation
-class Component
-{
+class Component {
 protected:
-  Adapter *mAdapter;
-  std::string mName;
-  Component *aParent;
+    Adapter *mAdapter;
+    std::string mName;
+    Component *aParent;
 
 public:
-  Component(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
-  virtual ~Component();
-  virtual void initialize();
-  virtual void gatherData(void *aContext) = 0;
+    Component(Adapter *anAdapter, std::string aName, Component *aParent = NULL);
+
+    virtual ~Component();
+
+    virtual void initialize();
+
+    virtual void gatherData(void *aContext) = 0;
 };
 
 #endif // COMPONENT_HPP
