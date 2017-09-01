@@ -1,0 +1,12 @@
+[Unit]
+Description=MT Connect adapter service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/adapter_fanuc --conf /etc/mtconnect/adapter/adapter.ini
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

@@ -9,3 +9,4 @@ target_link_libraries(adapter_fanuc fwlib32 adapter_generic minIni pthread)
 
 install(TARGETS adapter_fanuc DESTINATION /usr/local/bin)
 install(FILES adapter.ini DESTINATION /etc/mtconnect/adapter)
+install(FILES mtconnect-adapter.service DESTINATION /etc/systemd/system)
